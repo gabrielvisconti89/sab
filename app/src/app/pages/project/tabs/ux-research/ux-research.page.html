@@ -1,0 +1,722 @@
+<div class="pb-4 px-4">
+  <!-- Section Navigation -->
+  <div class="overflow-x-auto mt-2 mb-4 -mx-4 px-4 hide-scrollbar">
+    <div class="flex gap-3 min-w-max">
+      <button
+        *ngFor="let section of sections"
+        (click)="selectSection(section)"
+        [class]="activeSection === section.id
+          ? 'flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white font-medium whitespace-nowrap'
+          : 'flex items-center gap-2 px-4 py-2 rounded-full bg-slate-700/50 text-white/70 whitespace-nowrap hover:bg-slate-700'"
+      >
+        <ion-icon [name]="section.icon" class="text-lg"></ion-icon>
+        {{ section.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- PERSONAS SECTION -->
+  <div *ngIf="activeSection === 'personas'" class="space-y-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-white">Personas</h2>
+      <button
+        (click)="openCreatePersona()"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors"
+      >
+        <ion-icon name="add" class="text-base"></ion-icon>
+        Nova
+      </button>
+    </div>
+
+    <!-- Persona Cards -->
+    <div *ngFor="let persona of personas" class="glass-card">
+      <div class="flex justify-between items-start mb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+            <ion-icon name="person" class="text-2xl text-primary"></ion-icon>
+          </div>
+          <div>
+            <h3 class="font-semibold text-white flex items-center gap-2">
+              {{ persona.name }}
+              <span *ngIf="persona.isPrimary" class="text-xs bg-primary text-white px-2 py-0.5 rounded-full">Principal</span>
+            </h3>
+            <p class="text-sm text-white/50">{{ persona.profession }} | {{ persona.ageRange }} anos</p>
+          </div>
+        </div>
+        <div class="flex gap-1">
+          <ion-button fill="clear" size="small" (click)="openEditPersona(persona)" class="text-white/70">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" color="danger" (click)="deletePersona(persona)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+
+      <div class="space-y-2 text-sm">
+        <div class="flex gap-2">
+          <span class="text-white/50 w-24 shrink-0">Perfil:</span>
+          <span class="text-white/80">{{ persona.technicalProfile }}</span>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-white/50 w-24 shrink-0">Contexto:</span>
+          <span class="text-white/80">{{ persona.usageContext }}</span>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-white/50 w-24 shrink-0">Frustrações:</span>
+          <span class="text-white/80">{{ persona.frustrations }}</span>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-white/50 w-24 shrink-0">Objetivos:</span>
+          <span class="text-white/80">{{ persona.objectives }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="personas.length === 0" class="text-center py-12">
+      <ion-icon name="people-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhuma persona cadastrada</p>
+
+      <!-- Card Informativo -->
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que é uma Persona?</h4>
+        <p class="text-sm text-white/50 mb-3">
+          Representação fictícia do seu usuário ideal, baseada em dados reais sobre comportamento e objetivos.
+        </p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Decisões de design centradas no usuário</li>
+          <li>• Comunicação alinhada entre a equipe</li>
+          <li>• Priorização de funcionalidades</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROBLEM SECTION -->
+  <div *ngIf="activeSection === 'problem'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Problema Central</h2>
+
+    <div class="p-6 rounded-3xl glass-morphism space-y-6">
+      <app-form-field
+        label="Declaração do Problema"
+        type="textarea"
+        [(ngModel)]="problemCentral.problemStatement"
+        (blur)="saveProblemCentral()"
+        placeholder="Qual problema seus usuários enfrentam?"
+        [rows]="3"
+      ></app-form-field>
+
+      <app-form-field
+        label="Descrição Detalhada"
+        type="textarea"
+        [(ngModel)]="problemCentral.detailedDescription"
+        (blur)="saveProblemCentral()"
+        placeholder="Descreva o problema em detalhes..."
+        [rows]="4"
+      ></app-form-field>
+
+      <app-form-field
+        label="Solução Proposta"
+        type="textarea"
+        [(ngModel)]="problemCentral.proposedSolution"
+        (blur)="saveProblemCentral()"
+        placeholder="Como seu app resolve esse problema?"
+        [rows]="3"
+      ></app-form-field>
+
+      <app-form-field
+        label="Diferencial"
+        type="textarea"
+        [(ngModel)]="problemCentral.differential"
+        (blur)="saveProblemCentral()"
+        placeholder="O que torna sua solução única?"
+        [rows]="2"
+      ></app-form-field>
+    </div>
+  </div>
+
+  <!-- JOURNEY SECTION -->
+  <div *ngIf="activeSection === 'journey'" class="space-y-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-white">Jornada do Usuário</h2>
+      <button
+        (click)="openCreateJourney()"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors"
+      >
+        <ion-icon name="add" class="text-base"></ion-icon>
+        Nova Etapa
+      </button>
+    </div>
+
+    <!-- Journey Timeline -->
+    <div class="relative">
+      <div *ngFor="let step of journeySteps; let i = index; let last = last" class="flex gap-4 mb-4">
+        <!-- Timeline indicator -->
+        <div class="flex flex-col items-center">
+          <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold">
+            {{ step.order }}
+          </div>
+          <div *ngIf="!last" class="w-0.5 flex-1 bg-primary/30 my-2"></div>
+        </div>
+
+        <!-- Step Card -->
+        <div class="flex-1 glass-card">
+          <div class="flex justify-between items-start">
+            <div>
+              <h3 class="font-semibold text-white">{{ step.title }}</h3>
+              <p class="text-sm text-white/60 mt-1">{{ step.description }}</p>
+              <span *ngIf="step.emotion" class="inline-block mt-2 text-xs bg-yellow-500/20 text-yellow-300 px-2 py-1 rounded-full">
+                {{ step.emotion }}
+              </span>
+            </div>
+            <div class="flex gap-1">
+              <ion-button fill="clear" size="small" (click)="openEditJourney(step)" class="text-white/70">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small" color="danger" (click)="deleteJourney(step)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="journeySteps.length === 0" class="text-center py-12">
+      <ion-icon name="map-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhuma etapa da jornada</p>
+    </div>
+  </div>
+
+  <!-- SCREENS SECTION -->
+  <div *ngIf="activeSection === 'screens'" class="space-y-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-white">Telas Principais</h2>
+      <button
+        (click)="openCreateScreen()"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors"
+      >
+        <ion-icon name="add" class="text-base"></ion-icon>
+        Nova Tela
+      </button>
+    </div>
+
+    <!-- Screen Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div *ngFor="let screen of screens" class="glass-card">
+        <div class="flex justify-between items-start mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+              <ion-icon [name]="getScreenTypeIcon(screen.type)" class="text-xl text-white/60"></ion-icon>
+            </div>
+            <div>
+              <h3 class="font-semibold text-white">{{ screen.name }}</h3>
+              <span [class]="'text-xs px-2 py-0.5 rounded-full text-white bg-' + getPriorityColor(screen.priority)">
+                {{ screen.priority }}
+              </span>
+            </div>
+          </div>
+          <div class="flex gap-1">
+            <ion-button fill="clear" size="small" (click)="openEditScreen(screen)" class="text-white/70">
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" size="small" color="danger" (click)="deleteScreen(screen)">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+
+        <p class="text-sm text-white/60 mb-3">{{ screen.description }}</p>
+
+        <div class="flex flex-wrap gap-1">
+          <span *ngFor="let comp of screen.mainComponents" class="text-xs bg-white/10 text-white/60 px-2 py-1 rounded">
+            {{ comp }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="screens.length === 0" class="text-center py-12">
+      <ion-icon name="phone-portrait-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhuma tela cadastrada</p>
+    </div>
+  </div>
+
+  <!-- ACTIONS SECTION -->
+  <div *ngIf="activeSection === 'actions'" class="space-y-4">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-semibold text-white">Ações Críticas</h2>
+      <button
+        (click)="openCreateAction()"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors"
+      >
+        <ion-icon name="add" class="text-base"></ion-icon>
+        Nova Ação
+      </button>
+    </div>
+
+    <!-- Action Cards -->
+    <div *ngFor="let action of criticalActions" class="glass-card">
+      <div class="flex justify-between items-start">
+        <div class="flex items-center gap-3">
+          <ion-icon name="flash" [class]="'text-2xl text-' + getCriticalityColor(action.criticality)"></ion-icon>
+          <div>
+            <h3 class="font-semibold text-white flex items-center gap-2">
+              {{ action.action }}
+              <ion-badge [color]="getCriticalityColor(action.criticality)">{{ action.criticality }}</ion-badge>
+            </h3>
+            <p class="text-sm text-white/60">{{ action.description }}</p>
+          </div>
+        </div>
+        <div class="flex gap-1">
+          <ion-button fill="clear" size="small" (click)="openEditAction(action)" class="text-white/70">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" size="small" color="danger" (click)="deleteAction(action)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="criticalActions.length === 0" class="text-center py-12">
+      <ion-icon name="flash-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhuma ação crítica cadastrada</p>
+    </div>
+  </div>
+
+  <!-- CONTEXT SECTION -->
+  <div *ngIf="activeSection === 'context'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Contexto de Uso</h2>
+
+    <div class="p-6 rounded-3xl glass-morphism space-y-6">
+      <app-form-field
+        label="Frequência de Uso"
+        [(ngModel)]="usageContext.frequency"
+        (blur)="saveUsageContext()"
+        placeholder="Ex: Várias vezes por semana"
+      ></app-form-field>
+
+      <app-form-field
+        label="Dispositivo Prioritário"
+        [(ngModel)]="usageContext.priorityDevice"
+        (blur)="saveUsageContext()"
+        placeholder="Ex: Smartphone"
+      ></app-form-field>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Plataformas Alvo</label>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <button
+            *ngFor="let platform of platformOptions"
+            (click)="togglePlatform(platform)"
+            [class]="usageContext.targetPlatforms.includes(platform)
+              ? 'px-4 py-2 rounded-full bg-blue-500 text-white'
+              : 'px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-white/20'"
+          >
+            {{ platform }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Offline Toggle -->
+      <div class="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-xl">
+        <div>
+          <span class="text-white font-medium">Funcionalidade Offline</span>
+          <p class="text-xs text-white/50 mt-0.5">Requer funcionamento sem conexão</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" [(ngModel)]="usageContext.offlineRequired" (change)="saveUsageContext()" class="sr-only peer" />
+          <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+        </label>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Requisitos de Acessibilidade</label>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <button
+            *ngFor="let option of accessibilityOptions"
+            (click)="toggleAccessibility(option)"
+            [class]="usageContext.accessibilityRequirements.includes(option)
+              ? 'px-4 py-2 rounded-full bg-green-500 text-white'
+              : 'px-4 py-2 rounded-full bg-white/10 text-white/70 hover:bg-white/20'"
+          >
+            {{ option }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING SECTION -->
+  <div *ngIf="activeSection === 'onboarding'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Configuração de Onboarding</h2>
+
+    <div class="p-6 rounded-3xl glass-morphism space-y-6">
+      <!-- Needs Tutorial Toggle -->
+      <div class="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-xl">
+        <div>
+          <span class="text-white font-medium">Tutorial de Introdução</span>
+          <p class="text-xs text-white/50 mt-0.5">Mostrar tutorial para novos usuários</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" [(ngModel)]="onboardingConfig.needsTutorial" (change)="saveOnboarding()" class="sr-only peer" />
+          <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+        </label>
+      </div>
+
+      <app-form-field
+        *ngIf="onboardingConfig.needsTutorial"
+        label="Tipo de Onboarding"
+        [(ngModel)]="onboardingConfig.type"
+        (blur)="saveOnboarding()"
+        placeholder="Ex: Guiado passo-a-passo"
+      ></app-form-field>
+
+      <app-form-field
+        *ngIf="onboardingConfig.needsTutorial"
+        label="Número de Etapas"
+        type="number"
+        [(ngModel)]="onboardingConfig.stepsCount"
+        (blur)="saveOnboarding()"
+        placeholder="Ex: 4"
+      ></app-form-field>
+
+      <!-- Skip Allowed Toggle -->
+      <div *ngIf="onboardingConfig.needsTutorial" class="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-xl">
+        <div>
+          <span class="text-white font-medium">Permitir Pular</span>
+          <p class="text-xs text-white/50 mt-0.5">Usuário pode pular o onboarding</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" [(ngModel)]="onboardingConfig.skipAllowed" (change)="saveOnboarding()" class="sr-only peer" />
+          <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PERSONA MODAL -->
+<ion-modal [isOpen]="showPersonaModal" (didDismiss)="showPersonaModal = false">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="showPersonaModal = false"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">{{ personaForm.id === 0 ? 'Nova Persona' : 'Editar Persona' }}</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Nome -->
+          <app-form-field
+            label="Nome da persona"
+            [required]="true"
+            [(ngModel)]="personaForm.name"
+            placeholder="Ex: Rafael Dev"
+          ></app-form-field>
+
+          <!-- Faixa Etária e Profissão -->
+          <div class="grid grid-cols-2 gap-4">
+            <app-form-field
+              label="Faixa etária"
+              [(ngModel)]="personaForm.ageRange"
+              placeholder="Ex: 25-45 anos"
+            ></app-form-field>
+            <app-form-field
+              label="Profissão"
+              [(ngModel)]="personaForm.profession"
+              placeholder="Ex: Desenvolvedor"
+            ></app-form-field>
+          </div>
+
+          <!-- Perfil Técnico -->
+          <app-form-field
+            label="Perfil técnico"
+            [(ngModel)]="personaForm.technicalProfile"
+            placeholder="Ex: Intermediário a Avançado"
+          ></app-form-field>
+
+          <!-- Contexto de Uso -->
+          <app-form-field
+            label="Contexto de uso"
+            type="textarea"
+            [(ngModel)]="personaForm.usageContext"
+            placeholder="Quando e como essa persona usa o app..."
+            [rows]="3"
+          ></app-form-field>
+
+          <!-- Frustrações -->
+          <app-form-field
+            label="Frustrações atuais"
+            type="textarea"
+            [(ngModel)]="personaForm.frustrations"
+            placeholder="Principais dores e frustrações dessa persona..."
+            [rows]="3"
+          ></app-form-field>
+
+          <!-- Objetivos -->
+          <app-form-field
+            label="Objetivos"
+            type="textarea"
+            [(ngModel)]="personaForm.objectives"
+            placeholder="O que essa persona deseja alcançar..."
+            [rows]="3"
+          ></app-form-field>
+
+          <!-- Persona Principal Toggle -->
+          <div class="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-xl">
+            <div>
+              <span class="text-white font-medium">Persona Principal</span>
+              <p class="text-xs text-white/50 mt-0.5">Marcar como a persona mais importante do projeto</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="personaForm.isPrimary" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!personaForm.name?.trim()"
+          (btnClick)="savePersona()"
+        >
+          {{ personaForm.id === 0 ? 'Criar Persona' : 'Salvar' }}
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- JOURNEY MODAL -->
+<ion-modal [isOpen]="showJourneyModal" (didDismiss)="showJourneyModal = false">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="showJourneyModal = false"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">{{ journeyForm.id === 0 ? 'Nova Etapa' : 'Editar Etapa' }}</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Ordem e Título -->
+          <div class="grid grid-cols-4 gap-4">
+            <app-form-field
+              label="Ordem"
+              type="number"
+              [(ngModel)]="journeyForm.order"
+              placeholder="1"
+            ></app-form-field>
+            <div class="col-span-3">
+              <app-form-field
+                label="Título"
+                [required]="true"
+                [(ngModel)]="journeyForm.title"
+                placeholder="Ex: Descoberta"
+              ></app-form-field>
+            </div>
+          </div>
+
+          <!-- Descrição -->
+          <app-form-field
+            label="Descrição"
+            type="textarea"
+            [(ngModel)]="journeyForm.description"
+            placeholder="O que acontece nesta etapa..."
+            [rows]="4"
+          ></app-form-field>
+
+          <!-- Emoção -->
+          <app-form-field
+            label="Emoção do Usuário"
+            [(ngModel)]="journeyForm.emotion"
+            placeholder="Ex: Curioso, Empolgado"
+          ></app-form-field>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!journeyForm.title?.trim()"
+          (btnClick)="saveJourney()"
+        >
+          {{ journeyForm.id === 0 ? 'Criar Etapa' : 'Salvar' }}
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- SCREEN MODAL -->
+<ion-modal [isOpen]="showScreenModal" (didDismiss)="showScreenModal = false">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="showScreenModal = false"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">{{ screenForm.id === 0 ? 'Nova Tela' : 'Editar Tela' }}</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Nome da Tela -->
+          <app-form-field
+            label="Nome da tela"
+            [required]="true"
+            [(ngModel)]="screenForm.name"
+            placeholder="Ex: Lista de Projetos"
+          ></app-form-field>
+
+          <!-- Tipo e Prioridade -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Tipo</label>
+              <button
+                type="button"
+                (click)="openScreenTypeSelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ screenForm.type || 'Selecione...' }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Prioridade</label>
+              <button
+                type="button"
+                (click)="openScreenPrioritySelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ screenForm.priority || 'Selecione...' }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Descrição -->
+          <app-form-field
+            label="Descrição"
+            type="textarea"
+            [(ngModel)]="screenForm.description"
+            placeholder="Função principal da tela..."
+            [rows]="3"
+          ></app-form-field>
+
+          <!-- Componentes Principais -->
+          <div>
+            <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Componentes principais</label>
+            <input
+              type="text"
+              [value]="screenForm.mainComponents?.join(', ')"
+              (input)="onComponentsChange($event)"
+              placeholder="Separados por vírgula: Header, Lista, FAB"
+              class="block w-full bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-white/50 px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+            />
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!screenForm.name?.trim()"
+          (btnClick)="saveScreen()"
+        >
+          {{ screenForm.id === 0 ? 'Criar Tela' : 'Salvar' }}
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- ACTION MODAL -->
+<ion-modal [isOpen]="showActionModal" (didDismiss)="showActionModal = false">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="showActionModal = false"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">{{ actionForm.id === 0 ? 'Nova Ação' : 'Editar Ação' }}</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Nome da Ação -->
+          <app-form-field
+            label="Nome da ação"
+            [required]="true"
+            [(ngModel)]="actionForm.action"
+            placeholder="Ex: Criar Tabela"
+          ></app-form-field>
+
+          <!-- Criticidade -->
+          <div>
+            <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Criticidade</label>
+            <button
+              type="button"
+              (click)="openCriticalitySelector()"
+              class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+            >
+              <span>{{ actionForm.criticality || 'Selecione...' }}</span>
+              <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+            </button>
+          </div>
+
+          <!-- Descrição -->
+          <app-form-field
+            label="Descrição"
+            type="textarea"
+            [(ngModel)]="actionForm.description"
+            placeholder="O que essa ação faz..."
+            [rows]="4"
+          ></app-form-field>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!actionForm.action?.trim()"
+          (btnClick)="saveAction()"
+        >
+          {{ actionForm.id === 0 ? 'Criar Ação' : 'Salvar' }}
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>

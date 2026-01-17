@@ -1,0 +1,83 @@
+<div class="pb-4 px-4">
+  <h2 class="text-xl font-semibold text-white mb-6">Stack Frontend</h2>
+
+  <!-- Framework Config -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-4">Frameworks</h3>
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Ionic</label>
+        <ion-input [(ngModel)]="ionic.version" class="glass-input text-white"></ion-input>
+      </div>
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Angular</label>
+        <ion-input [(ngModel)]="angular.version" class="glass-input text-white"></ion-input>
+      </div>
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Capacitor</label>
+        <ion-input [(ngModel)]="capacitor.version" class="glass-input text-white"></ion-input>
+      </div>
+    </div>
+  </div>
+
+  <!-- Angular Config -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-4">Configuração Angular</h3>
+    <div class="space-y-2">
+      <ion-item lines="none" class="--ion-item-background: transparent;">
+        <ion-checkbox [(ngModel)]="angular.strictMode" slot="start"></ion-checkbox>
+        <ion-label class="text-white">Strict Mode</ion-label>
+      </ion-item>
+      <ion-item lines="none" class="--ion-item-background: transparent;">
+        <ion-checkbox [(ngModel)]="angular.standaloneComponents" slot="start"></ion-checkbox>
+        <ion-label class="text-white">Standalone Components</ion-label>
+      </ion-item>
+      <ion-item lines="none" class="--ion-item-background: transparent;">
+        <ion-checkbox [(ngModel)]="angular.ssr" slot="start"></ion-checkbox>
+        <ion-label class="text-white">SSR (Server-Side Rendering)</ion-label>
+      </ion-item>
+    </div>
+  </div>
+
+  <!-- Platforms -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-4">Plataformas Alvo</h3>
+    <div class="flex flex-wrap gap-2">
+      <button
+        *ngFor="let platform of platformOptions"
+        (click)="togglePlatform(platform)"
+        [class]="capacitor.platforms.includes(platform)
+          ? 'px-4 py-2 rounded-full bg-primary text-white'
+          : 'px-4 py-2 rounded-full bg-white/10 text-white/70'"
+      >{{ platform }}</button>
+    </div>
+  </div>
+
+  <!-- Dependencies -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-4">Dependências</h3>
+    <div class="space-y-2">
+      <div *ngFor="let dep of dependencies" class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+        <div class="flex items-center gap-3">
+          <ion-checkbox [(ngModel)]="dep.enabled"></ion-checkbox>
+          <div>
+            <span class="font-medium text-white">{{ dep.name }}</span>
+            <span class="text-sm text-white/50 ml-2">{{ dep.version }}</span>
+            <span *ngIf="dep.isDev" class="text-xs bg-yellow-500/20 text-yellow-300 px-1.5 py-0.5 rounded ml-2">dev</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Build Config -->
+  <div class="glass-card">
+    <h3 class="font-medium text-white mb-4">Configuração de Build</h3>
+    <div class="space-y-2">
+      <ion-item *ngFor="let config of buildConfig | keyvalue" lines="none" class="--ion-item-background: transparent;">
+        <ion-checkbox [(ngModel)]="buildConfig[config.key]" slot="start"></ion-checkbox>
+        <ion-label class="text-white">{{ config.key }}</ion-label>
+      </ion-item>
+    </div>
+  </div>
+</div>

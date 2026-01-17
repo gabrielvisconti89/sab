@@ -1,0 +1,126 @@
+// Home Page Styles - Glassmorphism Design
+
+// Hide scrollbar
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+// Glass morphism card effect
+.glass-morphism {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+// Glass header effect
+.glass-header {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+// Progress bar styles moved to global.scss
+
+// FAB button with glow
+.fab-button {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: #3b82f6;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Skeleton loading animation
+.skeleton {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+// Text progress color classes moved to global.scss
+
+
+// Base padding for mobile
+.home-container {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+// Responsive adjustments
+@media (min-width: 768px) {
+  .home-container {
+    max-width: 100%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .header-responsive {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+
+  .header-responsive {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+
+  // Grid para cards de projeto
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .home-container {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+
+  .header-responsive {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .home-container {
+    padding-left: 6rem;
+    padding-right: 6rem;
+  }
+
+  .header-responsive {
+    padding-left: 6rem;
+    padding-right: 6rem;
+  }
+
+  .projects-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

@@ -1,0 +1,504 @@
+/*
+ * App Global CSS - Glassmorphism iOS 26 Design
+ * ----------------------------------------------------------------------------
+ * Software Architecture Builder
+ */
+
+/* Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* ============================================
+   GRADIENT BACKGROUND - Navy Blue
+   ============================================ */
+ion-app {
+  background: linear-gradient(
+    135deg,
+    var(--gradient-start) 0%,
+    var(--gradient-mid) 50%,
+    var(--gradient-end) 100%
+  );
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+ion-content {
+  --background: transparent;
+}
+
+ion-header {
+  background: transparent;
+
+  ion-toolbar {
+    --background: transparent;
+    --border-width: 0;
+  }
+}
+
+ion-footer {
+  background: transparent;
+
+  ion-toolbar {
+    --background: transparent;
+  }
+}
+
+/* ============================================
+   GLASSMORPHISM UTILITY CLASSES
+   ============================================ */
+
+// Base glass effect
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+
+// Glass card with padding and radius
+.glass-card {
+  @extend .glass;
+  border-radius: var(--border-radius-card);
+  padding: var(--spacing-card);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--glass-bg-hover);
+  }
+
+  &:active {
+    background: var(--glass-bg-active);
+    transform: scale(0.98);
+  }
+}
+
+// Glass button
+.glass-button {
+  @extend .glass;
+  border-radius: var(--border-radius-button);
+  padding: 14px 24px;
+  min-height: var(--touch-target-min);
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--glass-bg-hover);
+  }
+
+  &:active {
+    background: var(--glass-bg-active);
+    transform: scale(0.96);
+  }
+}
+
+// Glass input
+.glass-input {
+  @extend .glass;
+  border-radius: var(--border-radius-input);
+  padding: 14px 16px;
+  min-height: var(--touch-target-min);
+}
+
+// Lighter glass variant
+.glass-light {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(var(--glass-blur-light));
+  -webkit-backdrop-filter: blur(var(--glass-blur-light));
+  border: 1px solid var(--glass-border-light);
+}
+
+// Glass morphism card effect (used across pages)
+.glass-morphism {
+  background: rgba(30, 41, 59, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+// Glass header effect (used across pages)
+.glass-header {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+// Hide scrollbar utility
+.no-scrollbar::-webkit-scrollbar,
+.hide-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.no-scrollbar,
+.hide-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* ============================================
+   IONIC COMPONENT OVERRIDES
+   ============================================ */
+
+// Cards - Glassmorphism com brilho superior
+ion-card {
+  --background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--border-radius-card);
+  margin: 0;
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.15),
+    0 8px 32px -8px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+ion-card-header {
+  padding: var(--spacing-card);
+  padding-bottom: 8px;
+}
+
+ion-card-content {
+  padding: var(--spacing-card);
+  padding-top: 8px;
+}
+
+// Items & Lists
+ion-item {
+  --background: transparent;
+  --border-color: var(--glass-border-light);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: var(--touch-target-min);
+}
+
+ion-list {
+  background: transparent;
+  --background: transparent;
+}
+
+// Buttons
+ion-button {
+  --border-radius: var(--border-radius-button);
+  min-height: var(--touch-target-min);
+  font-weight: 500;
+
+  &[fill="clear"] {
+    --background-hover: var(--glass-bg-hover);
+  }
+}
+
+// FAB
+ion-fab-button {
+  --background: var(--glass-bg);
+  --background-hover: var(--glass-bg-hover);
+  --background-activated: var(--glass-bg-active);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  ion-icon {
+    color: var(--ion-color-primary);
+  }
+}
+
+// Searchbar
+ion-searchbar {
+  --background: var(--glass-bg);
+  --border-radius: var(--border-radius-input);
+  --box-shadow: none;
+  --placeholder-opacity: 0.5;
+  --icon-color: rgba(255, 255, 255, 0.5);
+  --clear-button-color: rgba(255, 255, 255, 0.5);
+  padding: 0 !important;
+
+  .searchbar-input-container {
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border-light);
+    border-radius: var(--border-radius-input);
+  }
+}
+
+// Modals
+ion-modal {
+  --background: transparent;
+  --border-radius: 0;
+
+  // Mobile/Tablet: modal ocupa 100% da tela
+  --height: 100%;
+
+  // Desktop: modal com altura automática e max-height
+  @media (min-width: 1024px) {
+    --height: auto;
+    --max-height: 80vh;
+    --border-radius: 8px;
+  }
+
+  .ion-page {
+    position: relative;
+    contain: content;
+    background: linear-gradient(
+      180deg,
+      var(--gradient-mid) 0%,
+      var(--gradient-start) 100%
+    );
+    overflow: hidden;
+  }
+
+  ion-header ion-toolbar {
+    --background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+}
+
+// Action Sheets - Dark Mode
+ion-action-sheet {
+  --background: transparent;
+  --backdrop-opacity: 0.7;
+
+  .action-sheet-group {
+    background: #1e293b !important;
+    border-radius: 16px;
+    margin: 8px;
+    overflow: hidden;
+  }
+
+  .action-sheet-group-cancel {
+    background: #1e293b !important;
+    margin-top: 8px;
+  }
+
+  .action-sheet-title {
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 16px 16px 8px;
+  }
+
+  .action-sheet-sub-title {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 13px;
+    padding: 0 16px 12px;
+  }
+
+  .action-sheet-button {
+    --background: transparent;
+    --background-hover: rgba(255, 255, 255, 0.1);
+    --background-activated: rgba(255, 255, 255, 0.1);
+    --color: #ffffff;
+    font-size: 18px;
+    min-height: 56px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+    &.action-sheet-selected {
+      --color: #3b82f6;
+      font-weight: 600;
+    }
+
+    &.action-sheet-cancel {
+      --color: #3b82f6;
+      font-weight: 600;
+    }
+
+    &[data-role="destructive"] {
+      --color: #ef4444;
+    }
+  }
+
+  .action-sheet-button-inner {
+    justify-content: center;
+  }
+
+  .action-sheet-icon {
+    color: inherit;
+  }
+}
+
+// Alerts
+ion-alert {
+  --background: rgba(15, 23, 42, 0.95);
+  --backdrop-opacity: 0.6;
+
+  .alert-wrapper {
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-card);
+  }
+}
+
+// Select
+ion-select {
+  --placeholder-opacity: 0.5;
+}
+
+// Progress bar
+ion-progress-bar {
+  --background: rgba(255, 255, 255, 0.1);
+  --progress-background: var(--ion-color-success);
+  height: 6px;
+  border-radius: 3px;
+}
+
+// Segment
+ion-segment {
+  --background: var(--glass-bg);
+  border-radius: var(--border-radius-button);
+  border: 1px solid var(--glass-border-light);
+}
+
+ion-segment-button {
+  --background-checked: var(--glass-bg-hover);
+  --indicator-color: var(--ion-color-primary);
+  min-height: 44px;
+}
+
+// Inputs
+ion-input, ion-textarea {
+  --background: var(--glass-bg);
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --border-radius: var(--border-radius-input);
+  min-height: var(--touch-target-min);
+}
+
+// Checkbox & Toggle
+ion-checkbox {
+  --size: 24px;
+  --border-radius: 6px;
+}
+
+ion-toggle {
+  --handle-width: 26px;
+  --handle-height: 26px;
+}
+
+/* ============================================
+   TEXT COLORS
+   ============================================ */
+
+.text-primary {
+  color: #ffffff !important;
+}
+
+.text-secondary {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.text-muted {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ============================================
+   UTILITY - Line Clamp
+   ============================================ */
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================
+   PROGRESS BAR - Dynamic Colors
+   ============================================ */
+
+// Progress bar styles with gradients and glow
+.progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: rgba(51, 65, 85, 0.5);
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+
+    &.emerald {
+      background: linear-gradient(to right, #14b8a6, #34d399);
+      box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);
+    }
+
+    &.amber {
+      background: linear-gradient(to right, #f97316, #fbbf24);
+      box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+    }
+
+    &.red {
+      background: linear-gradient(to right, #dc2626, #ef4444);
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    }
+  }
+}
+
+// Text progress color classes
+.text-emerald {
+  color: #34d399;
+}
+.text-amber {
+  color: #fbbf24;
+}
+.text-red {
+  color: #f87171;
+}
+
+/* ============================================
+   ACCESSIBILITY - Reduced Motion
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

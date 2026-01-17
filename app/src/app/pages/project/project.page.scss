@@ -1,0 +1,84 @@
+// Project Page Styles - Glassmorphism Design
+
+// Header styling - matching home page glass-header
+ion-toolbar {
+  --background: rgba(30, 41, 59, 0.7);
+  --color: white;
+  --border-width: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+ion-title {
+  font-weight: 600;
+  font-size: 17px;
+}
+
+ion-button {
+  --color: rgba(255, 255, 255, 0.8);
+}
+
+// Container
+.project-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// Fix ion-router-outlet positioning and allow content to scroll
+ion-router-outlet {
+  position: relative !important;
+  contain: none !important;
+}
+
+// Override Ionic's default page containment to allow content expansion
+// Using ::ng-deep to pierce through view encapsulation
+:host ::ng-deep ion-router-outlet .ion-page {
+  position: relative !important;
+  contain: none !important;
+  overflow: visible !important;
+}
+
+
+// Category Cards - Large navigation
+.category-card {
+  min-width: 5.5rem; // ~88px
+  width: 5.5rem;
+  height: 5rem; // 80px
+}
+
+.category-card-inactive {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+
+  &:hover {
+    background: #263445;
+  }
+
+  &:active {
+    transform: scale(0.95);
+    background: #334155;
+  }
+}
+
+.category-card-active {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+// Ion-select styling for settings modal
+ion-select {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --placeholder-color: rgba(255, 255, 255, 0.5);
+  --placeholder-opacity: 1;
+  min-height: 48px;
+}
+

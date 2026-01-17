@@ -1,0 +1,27 @@
+<div>
+  <label *ngIf="label" class="block text-xs font-medium text-gray-300 mb-2 ml-1">
+    {{ label }}<span *ngIf="required" class="text-red-400 ml-0.5">*</span>
+  </label>
+
+  <input
+    *ngIf="type !== 'textarea'"
+    [type]="type"
+    [value]="value"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    class="block w-full bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-white/50 px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+  />
+
+  <textarea
+    *ngIf="type === 'textarea'"
+    [value]="value"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    [rows]="rows"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    class="block w-full bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-white/50 px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-white/30 resize-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+  ></textarea>
+</div>

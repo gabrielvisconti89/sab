@@ -1,0 +1,74 @@
+<div class="pb-4 px-4">
+  <!-- Environment Tabs -->
+  <div class="overflow-x-auto mt-2 mb-6 -mx-4 px-4 hide-scrollbar">
+    <div class="flex gap-3 min-w-max">
+      <button *ngFor="let env of envTabs" (click)="selectEnv(env)"
+        [class]="activeEnv === env.id
+          ? 'flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white font-medium whitespace-nowrap'
+          : 'flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/70 whitespace-nowrap'">
+        <ion-icon [name]="env.icon" class="text-lg"></ion-icon>
+        {{ env.label }}
+      </button>
+    </div>
+  </div>
+
+  <h2 class="text-xl font-semibold text-white mb-4 capitalize">{{ activeEnv }}</h2>
+
+  <!-- URLs -->
+  <div class="glass-card mb-4 space-y-4">
+    <h3 class="font-medium text-white">URLs</h3>
+    <div>
+      <label class="text-sm text-white/60 mb-1 block">Frontend URL</label>
+      <ion-input [(ngModel)]="currentEnv.frontendUrl" placeholder="https://..." class="glass-input text-white"></ion-input>
+    </div>
+    <div>
+      <label class="text-sm text-white/60 mb-1 block">API URL</label>
+      <ion-input [(ngModel)]="currentEnv.apiUrl" placeholder="https://api..." class="glass-input text-white"></ion-input>
+    </div>
+    <div>
+      <label class="text-sm text-white/60 mb-1 block">Admin URL</label>
+      <ion-input [(ngModel)]="currentEnv.adminUrl" placeholder="https://admin..." class="glass-input text-white"></ion-input>
+    </div>
+  </div>
+
+  <!-- Infrastructure -->
+  <div class="glass-card mb-4 space-y-4">
+    <h3 class="font-medium text-white">Infraestrutura</h3>
+    <div>
+      <label class="text-sm text-white/60 mb-1 block">Servidor</label>
+      <ion-input [(ngModel)]="currentEnv.server" placeholder="AWS EC2, DigitalOcean..." class="glass-input text-white"></ion-input>
+    </div>
+    <div>
+      <label class="text-sm text-white/60 mb-1 block">Banco de Dados</label>
+      <ion-input [(ngModel)]="currentEnv.database" placeholder="RDS MySQL, PlanetScale..." class="glass-input text-white"></ion-input>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-2">Observações</h3>
+    <ion-textarea [(ngModel)]="currentEnv.notes" [autoGrow]="true" placeholder="Notas sobre o ambiente..." class="glass-input text-white"></ion-textarea>
+  </div>
+
+  <!-- Environment Variables -->
+  <div class="glass-card">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-medium text-white">Variáveis de Ambiente</h3>
+      <ion-button fill="clear" size="small" (click)="addEnvVar()" class="text-white/70">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </div>
+    <div class="space-y-2">
+      <div *ngFor="let envVar of currentEnv.envVariables | keyvalue" class="flex items-center gap-2">
+        <span class="text-sm font-mono text-white/60 w-32 shrink-0">{{ envVar.key }}</span>
+        <ion-input [(ngModel)]="currentEnv.envVariables[envVar.key]" class="flex-1 glass-input text-sm text-white"></ion-input>
+        <ion-button fill="clear" size="small" color="danger" (click)="removeEnvVar(envVar.key)">
+          <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+    <p *ngIf="(currentEnv.envVariables | keyvalue).length === 0" class="text-sm text-white/40 text-center py-4">
+      Nenhuma variável configurada
+    </p>
+  </div>
+</div>

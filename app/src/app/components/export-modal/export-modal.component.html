@@ -1,0 +1,284 @@
+<ion-modal [isOpen]="isOpen" (didDismiss)="onClose()">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="onClose()"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Fechar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">Exportar Projeto</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Export Options -->
+        <div *ngIf="!exportComplete">
+          <!-- Database Target Card -->
+          <div class="p-6 rounded-3xl glass-morphism space-y-6 mb-6">
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Banco de dados alvo</label>
+              <button
+                type="button"
+                (click)="openDatabaseSelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ getDatabaseLabel(options.targetDatabase) }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Export Formats Card -->
+          <div class="p-6 rounded-3xl glass-morphism space-y-4">
+            <h3 class="text-sm font-semibold text-white/70 mb-4">Formatos</h3>
+
+            <!-- SQL Schema -->
+            <div
+              class="flex items-center gap-4 p-4 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors"
+              (click)="options.sql = !options.sql"
+            >
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" [(ngModel)]="options.sql" class="sr-only peer" />
+                <div class="w-5 h-5 bg-white/20 rounded border border-white/30 peer-checked:bg-blue-500 peer-checked:border-blue-500 flex items-center justify-center">
+                  <ion-icon *ngIf="options.sql" name="checkmark" class="text-white text-sm"></ion-icon>
+                </div>
+              </label>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <ion-icon name="server-outline" class="text-blue-400 text-xl"></ion-icon>
+                  <span class="font-medium text-white">SQL Schema</span>
+                </div>
+                <p class="text-sm text-white/50 mt-1">Script CREATE TABLE completo</p>
+              </div>
+            </div>
+
+            <!-- Laravel Migrations -->
+            <div
+              class="flex items-center gap-4 p-4 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors"
+              (click)="options.migrations = !options.migrations"
+            >
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" [(ngModel)]="options.migrations" class="sr-only peer" />
+                <div class="w-5 h-5 bg-white/20 rounded border border-white/30 peer-checked:bg-blue-500 peer-checked:border-blue-500 flex items-center justify-center">
+                  <ion-icon *ngIf="options.migrations" name="checkmark" class="text-white text-sm"></ion-icon>
+                </div>
+              </label>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <ion-icon name="code-slash-outline" class="text-purple-400 text-xl"></ion-icon>
+                  <span class="font-medium text-white">Laravel Migrations</span>
+                </div>
+                <p class="text-sm text-white/50 mt-1">Arquivos de migration para Laravel</p>
+              </div>
+            </div>
+
+            <!-- claude.md -->
+            <div
+              class="flex items-center gap-4 p-4 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors"
+              (click)="options.claudeMd = !options.claudeMd"
+            >
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" [(ngModel)]="options.claudeMd" class="sr-only peer" />
+                <div class="w-5 h-5 bg-white/20 rounded border border-white/30 peer-checked:bg-blue-500 peer-checked:border-blue-500 flex items-center justify-center">
+                  <ion-icon *ngIf="options.claudeMd" name="checkmark" class="text-white text-sm"></ion-icon>
+                </div>
+              </label>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <ion-icon name="document-text-outline" class="text-green-400 text-xl"></ion-icon>
+                  <span class="font-medium text-white">claude.md</span>
+                </div>
+                <p class="text-sm text-white/50 mt-1">Documentação completa para uso com IA</p>
+              </div>
+            </div>
+
+            <!-- README.md -->
+            <div
+              class="flex items-center gap-4 p-4 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors"
+              (click)="options.readme = !options.readme"
+            >
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" [(ngModel)]="options.readme" class="sr-only peer" />
+                <div class="w-5 h-5 bg-white/20 rounded border border-white/30 peer-checked:bg-blue-500 peer-checked:border-blue-500 flex items-center justify-center">
+                  <ion-icon *ngIf="options.readme" name="checkmark" class="text-white text-sm"></ion-icon>
+                </div>
+              </label>
+              <div class="flex-1">
+                <div class="flex items-center gap-2">
+                  <ion-icon name="book-outline" class="text-amber-400 text-xl"></ion-icon>
+                  <span class="font-medium text-white">README.md</span>
+                </div>
+                <p class="text-sm text-white/50 mt-1">Documentação inicial do projeto</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Validation Errors -->
+          <div *ngIf="validationErrors.length > 0" class="space-y-2">
+            <div
+              *ngFor="let error of validationErrors"
+              class="flex items-start gap-2 p-3 rounded-xl"
+              [ngClass]="{
+                'bg-red-500/20 border border-red-500/30': error.type === 'error',
+                'bg-amber-500/20 border border-amber-500/30': error.type === 'warning'
+              }"
+            >
+              <ion-icon
+                [name]="error.type === 'error' ? 'alert-circle' : 'warning'"
+                [class]="error.type === 'error' ? 'text-red-400' : 'text-amber-400'"
+                class="text-lg mt-0.5"
+              ></ion-icon>
+              <div class="flex-1">
+                <p class="text-sm text-white">{{ error.message }}</p>
+                <p *ngIf="error.table" class="text-xs text-white/50 mt-0.5">
+                  Tabela: {{ error.table }}
+                  <span *ngIf="error.column"> / Coluna: {{ error.column }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="p-4 bg-white/10 rounded-xl border border-white/10">
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-white/60">Tabelas a exportar</span>
+              <span class="font-semibold text-white">{{ tables.length }}</span>
+            </div>
+          </div>
+
+          <!-- Export Button -->
+          <button
+            (click)="generateExport()"
+            [disabled]="!canExport || isExporting"
+            class="w-full py-4 rounded-2xl bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-lg transition-all border border-white/10 shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
+          >
+            <ion-icon name="download-outline" class="text-xl"></ion-icon>
+            {{ isExporting ? 'Gerando...' : 'Gerar Exportação' }}
+          </button>
+
+          <!-- Progress -->
+          <div *ngIf="isExporting" class="text-center">
+            <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+              <div class="h-full bg-blue-500 transition-all" [style.width.%]="exportProgress"></div>
+            </div>
+            <p class="text-sm text-white/50 mt-2">Gerando arquivos... {{ exportProgress }}%</p>
+          </div>
+        </div>
+
+        <!-- Export Results -->
+        <div *ngIf="exportComplete" class="space-y-6">
+          <div class="text-center">
+            <ion-icon name="checkmark-circle" class="text-6xl text-green-400"></ion-icon>
+            <h2 class="text-xl font-semibold text-white mt-2">Exportação Concluída!</h2>
+            <p class="text-white/50 mt-1">{{ generatedFiles.length }} arquivo(s) gerado(s)</p>
+          </div>
+
+          <!-- Generated Files -->
+          <div class="space-y-3">
+            <div
+              *ngFor="let file of generatedFiles"
+              class="p-4 rounded-xl glass-morphism cursor-pointer hover:bg-white/10 transition-colors"
+              (click)="openPreview(file)"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-10 h-10 rounded-lg flex items-center justify-center"
+                  [ngClass]="{
+                    'bg-blue-500/20': file.type === 'sql',
+                    'bg-purple-500/20': file.type === 'php',
+                    'bg-green-500/20': file.type === 'md'
+                  }"
+                >
+                  <ion-icon
+                    [name]="getFileIcon(file.type)"
+                    [ngClass]="{
+                      'text-blue-400': file.type === 'sql',
+                      'text-purple-400': file.type === 'php',
+                      'text-green-400': file.type === 'md'
+                    }"
+                    class="text-xl"
+                  ></ion-icon>
+                </div>
+                <div class="flex-1">
+                  <span class="font-medium text-white">{{ file.name }}</span>
+                  <p class="text-xs text-white/50">{{ file.content.length }} caracteres</p>
+                </div>
+                <button
+                  (click)="downloadFile(file); $event.stopPropagation()"
+                  class="p-2 text-white/70 hover:text-white transition-colors"
+                  aria-label="Baixar arquivo"
+                >
+                  <ion-icon name="download-outline" class="text-xl"></ion-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="space-y-3">
+            <button
+              (click)="downloadAll()"
+              class="w-full py-4 rounded-2xl bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg transition-all border border-white/10 shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
+            >
+              <ion-icon name="archive-outline" class="text-xl"></ion-icon>
+              Baixar ZIP
+            </button>
+
+            <button
+              (click)="exportComplete = false"
+              class="w-full py-3 rounded-2xl bg-slate-700/50 text-white/70 font-medium hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
+            >
+              <ion-icon name="arrow-back-outline" class="text-lg"></ion-icon>
+              Voltar
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- Preview Modal -->
+<ion-modal [isOpen]="showPreview" (didDismiss)="closePreview()">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 flex items-center justify-between">
+        <button
+          (click)="closePreview()"
+          class="text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Voltar
+        </button>
+        <h1 class="text-lg font-bold text-white">{{ previewFile?.name }}</h1>
+        <div class="flex items-center gap-2">
+          <button
+            (click)="copyToClipboard(previewFile?.content || '')"
+            class="p-2 text-white/70 hover:text-white transition-colors"
+            aria-label="Copiar conteúdo"
+          >
+            <ion-icon name="copy-outline" class="text-xl"></ion-icon>
+          </button>
+          <button
+            (click)="previewFile && downloadFile(previewFile)"
+            class="p-2 text-white/70 hover:text-white transition-colors"
+            aria-label="Baixar arquivo"
+          >
+            <ion-icon name="download-outline" class="text-xl"></ion-icon>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-4 pb-8 overflow-y-auto no-scrollbar">
+        <div class="p-4 rounded-2xl glass-morphism">
+          <pre class="text-sm font-mono text-white/80 whitespace-pre-wrap overflow-x-auto">{{ previewFile?.content }}</pre>
+        </div>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>

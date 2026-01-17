@@ -1,0 +1,517 @@
+<!-- Tables List View -->
+<div *ngIf="!selectedTable" class="h-full">
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="p-4 space-y-4">
+    <div *ngFor="let i of [1,2,3]" class="glass-card animate-pulse">
+      <div class="h-5 bg-white/10 rounded w-1/3 mb-2"></div>
+      <div class="h-4 bg-white/10 rounded w-2/3"></div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!isLoading && tables.length === 0"
+    class="flex flex-col items-center justify-center h-full px-8 text-center"
+  >
+    <div class="glass-card w-full max-w-sm">
+      <ion-icon
+        name="server-outline"
+        class="text-8xl text-white/30 mb-4"
+      ></ion-icon>
+      <h2 class="text-xl font-semibold text-white mb-2">
+        Nenhuma tabela ainda
+      </h2>
+      <p class="text-white/60 mb-6">
+        Comece criando sua primeira tabela de banco de dados.
+      </p>
+      <ion-button (click)="openCreateTable()" expand="block">
+        <ion-icon slot="start" name="add-outline"></ion-icon>
+        Criar Tabela
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Tables Grid -->
+  <div *ngIf="!isLoading && tables.length > 0" class="p-4 space-y-3 pb-24">
+    <div
+      *ngFor="let table of tables"
+      class="table-card"
+      (click)="selectTable(table)"
+    >
+      <div class="flex items-start justify-between">
+        <div class="flex-1">
+          <h3 class="font-semibold text-white flex items-center gap-2">
+            <ion-icon name="grid-outline" class="text-primary"></ion-icon>
+            {{ table.name }}
+          </h3>
+          <p class="text-sm text-white/60 mt-1">
+            {{ table.description || 'Sem descrição' }}
+          </p>
+        </div>
+        <ion-button fill="clear" size="small" (click)="openEditTable(table, $event)" aria-label="Editar tabela" class="text-white/70">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="flex items-center gap-4 mt-3 text-sm">
+        <span class="flex items-center gap-1 text-white/50">
+          <ion-icon name="layers-outline"></ion-icon>
+          {{ table.columns?.length || 0 }} colunas
+        </span>
+        <span
+          *ngIf="table.hasTimestamps"
+          class="px-2 py-0.5 bg-blue-500/20 text-blue-300 rounded text-xs"
+        >
+          timestamps
+        </span>
+        <span
+          *ngIf="table.hasSoftDelete"
+          class="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs"
+        >
+          soft delete
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <ion-fab *ngIf="!isLoading" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="openCreateTable()" aria-label="Criar nova tabela">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</div>
+
+<!-- Table Detail View (Columns) -->
+<div *ngIf="selectedTable" class="h-full flex flex-col">
+  <!-- Header -->
+  <div class="px-4 py-3 glass-header">
+    <div class="flex items-center gap-3">
+      <ion-button fill="clear" size="small" (click)="backToTables()" aria-label="Voltar para lista de tabelas" class="text-white/70">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+      <div class="flex-1">
+        <h2 class="font-semibold text-lg text-white">
+          {{ selectedTable.name }}
+        </h2>
+        <p class="text-sm text-white/60">
+          {{ selectedTable.columns?.length || 0 }} colunas
+        </p>
+      </div>
+      <ion-button fill="outline" size="small" (click)="openSqlPreview()" class="glass-button-outline">
+        <ion-icon slot="start" name="code-outline"></ion-icon>
+        SQL
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Columns List -->
+  <div class="flex-1 overflow-auto p-4 space-y-2 pb-24">
+    <div *ngIf="selectedTable.columns?.length === 0" class="text-center py-8">
+      <p class="text-white/60">Nenhuma coluna ainda.</p>
+    </div>
+
+    <div
+      *ngFor="let column of selectedTable.columns; let i = index"
+      class="column-item"
+      (click)="openEditColumn(column, $event)"
+    >
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-white/40 w-6 text-right">{{ i + 1 }}</span>
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-white">{{ column.name }}</span>
+            <span
+              *ngFor="let badge of getColumnBadges(column)"
+              class="px-1.5 py-0.5 text-xs rounded"
+              [ngClass]="{
+                'bg-yellow-500/20 text-yellow-300': badge === 'PK',
+                'bg-orange-500/20 text-orange-300': badge === 'FK',
+                'bg-blue-500/20 text-blue-300': badge === 'UQ',
+                'bg-green-500/20 text-green-300': badge === 'IDX',
+                'bg-purple-500/20 text-purple-300': badge === 'AI'
+              }"
+            >
+              {{ badge }}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-white/50 mt-0.5">
+            <span class="font-mono text-xs">{{ getColumnTypeDisplay(column) }}</span>
+            <span *ngIf="column.isNullable" class="text-white/40">NULL</span>
+            <span *ngIf="column.defaultValue" class="text-white/40">= {{ column.defaultValue }}</span>
+            <span *ngIf="column.isForeignKey && column.foreignKey" class="text-orange-400 text-xs">
+              -> {{ column.foreignKey.referenceTable }}.{{ column.foreignKey.referenceColumn }}
+            </span>
+          </div>
+        </div>
+        <ion-button fill="clear" size="small" color="danger" (click)="confirmDeleteColumn(column, $event)" aria-label="Excluir coluna">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAB -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="openCreateColumn()" aria-label="Criar nova coluna">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</div>
+
+<!-- Create/Edit Table Modal -->
+<ion-modal [isOpen]="showTableModal" (didDismiss)="closeTableModal()" aria-labelledby="table-modal-title">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="closeTableModal()"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 id="table-modal-title" class="text-lg font-bold text-white text-center">{{ tableForm.id ? 'Editar' : 'Nova' }} Tabela</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Nome da tabela -->
+          <app-form-field
+            label="Nome da tabela"
+            [required]="true"
+            [(ngModel)]="tableForm.name"
+            placeholder="Ex: users, products, orders"
+          ></app-form-field>
+
+          <!-- Descrição -->
+          <app-form-field
+            label="Descrição"
+            type="textarea"
+            [(ngModel)]="tableForm.description"
+            placeholder="Propósito da tabela..."
+            [rows]="3"
+          ></app-form-field>
+
+          <!-- Timestamps Toggle -->
+          <div class="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-xl">
+            <div>
+              <span class="text-white font-medium">Timestamps</span>
+              <p class="text-xs text-white/50 mt-0.5">Adiciona created_at e updated_at</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="tableForm.hasTimestamps" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+            </label>
+          </div>
+
+          <!-- Soft Delete Toggle -->
+          <div class="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-xl">
+            <div>
+              <span class="text-white font-medium">Soft Delete</span>
+              <p class="text-xs text-white/50 mt-0.5">Adiciona deleted_at para exclusão suave</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="tableForm.hasSoftDelete" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!tableForm.name.trim()"
+          (btnClick)="saveTable()"
+        >
+          Salvar
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- Create/Edit Column Modal -->
+<ion-modal [isOpen]="showColumnModal" (didDismiss)="closeColumnModal()" aria-labelledby="column-modal-title">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="closeColumnModal()"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 id="column-modal-title" class="text-lg font-bold text-white text-center">{{ columnForm.id ? 'Editar' : 'Nova' }} Coluna</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Basic Info Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Nome da coluna -->
+          <app-form-field
+            label="Nome da coluna"
+            [required]="true"
+            [(ngModel)]="columnForm.name"
+            placeholder="Ex: name, email, price"
+          ></app-form-field>
+
+          <!-- Descrição -->
+          <app-form-field
+            label="Descrição"
+            type="textarea"
+            [(ngModel)]="columnForm.description"
+            placeholder="Objetivo da coluna..."
+            [rows]="2"
+          ></app-form-field>
+
+          <!-- Categoria e Tipo -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Categoria</label>
+              <button
+                type="button"
+                (click)="openCategorySelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ getCategoryLabel(selectedCategory) }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Tipo de dado</label>
+              <button
+                type="button"
+                (click)="openDataTypeSelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ columnForm.dataType || 'Selecione...' }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tamanho (condicional) -->
+          <app-form-field
+            *ngIf="needsLength(columnForm.dataType!)"
+            label="Tamanho"
+            type="number"
+            [(ngModel)]="columnForm.dataLength"
+            placeholder="255"
+          ></app-form-field>
+
+          <!-- Precisão e Escala (condicional) -->
+          <div *ngIf="needsPrecision(columnForm.dataType!)" class="grid grid-cols-2 gap-4">
+            <app-form-field
+              label="Precisão"
+              type="number"
+              [(ngModel)]="columnForm.dataPrecision"
+              placeholder="10"
+            ></app-form-field>
+            <app-form-field
+              label="Escala"
+              type="number"
+              [(ngModel)]="columnForm.dataScale"
+              placeholder="2"
+            ></app-form-field>
+          </div>
+
+          <!-- Valores ENUM (condicional) -->
+          <div *ngIf="needsEnumValues(columnForm.dataType!)">
+            <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Valores (separados por vírgula)</label>
+            <input
+              type="text"
+              [value]="columnForm.enumValues?.join(', ')"
+              (input)="onEnumValuesChange($event)"
+              placeholder="valor1, valor2, valor3"
+              class="block w-full bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-white/50 px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+            />
+          </div>
+
+          <!-- Valor padrão -->
+          <app-form-field
+            label="Valor padrão"
+            [(ngModel)]="columnForm.defaultValue"
+            placeholder="Opcional"
+          ></app-form-field>
+        </div>
+
+        <!-- Constraints Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-4">
+          <h3 class="text-sm font-semibold text-white/70 mb-4">Constraints</h3>
+
+          <!-- Nullable -->
+          <div class="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-xl">
+            <span class="text-white">Nullable (permite NULL)</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="columnForm.isNullable" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+            </label>
+          </div>
+
+          <!-- Primary Key -->
+          <div class="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-xl">
+            <span class="text-white">Primary Key</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="columnForm.isPrimaryKey" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+            </label>
+          </div>
+
+          <!-- Auto Increment -->
+          <div class="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-xl">
+            <span class="text-white">Auto Increment</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="columnForm.isAutoIncrement" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
+            </label>
+          </div>
+
+          <!-- Unique -->
+          <div class="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-xl">
+            <span class="text-white">Unique</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="columnForm.isUnique" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+            </label>
+          </div>
+
+          <!-- Index -->
+          <div class="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-xl">
+            <span class="text-white">Index</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="columnForm.isIndexed" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+            </label>
+          </div>
+
+          <!-- Unsigned (condicional) -->
+          <div *ngIf="isNumericType(columnForm.dataType!)" class="flex items-center justify-between p-3 bg-black/20 border border-white/10 rounded-xl">
+            <span class="text-white">Unsigned (apenas positivos)</span>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="columnForm.isUnsigned" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Foreign Key Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-4">
+          <h3 class="text-sm font-semibold text-white/70 mb-4">Foreign Key</h3>
+
+          <!-- Foreign Key Toggle -->
+          <div class="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-xl">
+            <div>
+              <span class="text-white font-medium">Chave Estrangeira</span>
+              <p class="text-xs text-white/50 mt-0.5">Referencia outra tabela</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" [(ngModel)]="columnForm.isForeignKey" (change)="onForeignKeyToggle()" class="sr-only peer" />
+              <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+            </label>
+          </div>
+
+          <!-- FK Fields (condicional) -->
+          <div *ngIf="columnForm.isForeignKey && columnForm.foreignKey" class="space-y-4 pt-2">
+            <!-- Tabela referenciada -->
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Tabela referenciada</label>
+              <button
+                type="button"
+                (click)="openReferenceTableSelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ columnForm.foreignKey.referenceTable || 'Selecione uma tabela' }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+
+            <!-- Coluna referenciada (condicional) -->
+            <div *ngIf="columnForm.foreignKey.referenceTable">
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Coluna referenciada</label>
+              <button
+                type="button"
+                (click)="openReferenceColumnSelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ columnForm.foreignKey.referenceColumn || 'Selecione uma coluna' }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+
+            <!-- ON DELETE e ON UPDATE -->
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">ON DELETE</label>
+                <button
+                  type="button"
+                  (click)="openOnDeleteSelector()"
+                  class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+                >
+                  <span>{{ columnForm.foreignKey.onDelete || 'CASCADE' }}</span>
+                  <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+                </button>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">ON UPDATE</label>
+                <button
+                  type="button"
+                  (click)="openOnUpdateSelector()"
+                  class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+                >
+                  <span>{{ columnForm.foreignKey.onUpdate || 'CASCADE' }}</span>
+                  <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!columnForm.name?.trim()"
+          (btnClick)="saveColumn()"
+        >
+          Salvar
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- SQL Preview Modal -->
+<ion-modal [isOpen]="showSqlPreview" (didDismiss)="closeSqlPreview()" aria-labelledby="sql-preview-title">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="closeSqlPreview()"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Fechar
+        </button>
+        <h1 id="sql-preview-title" class="text-lg font-bold text-white text-center">SQL Preview</h1>
+        <button
+          (click)="copyToClipboard(sqlPreviewContent)"
+          class="justify-self-end p-2 text-white/70 hover:text-white transition-colors"
+          aria-label="Copiar SQL para área de transferência"
+        >
+          <ion-icon name="copy-outline" class="text-xl"></ion-icon>
+        </button>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 overflow-y-auto no-scrollbar">
+        <div class="p-4 rounded-2xl glass-morphism">
+          <pre class="sql-preview text-sm font-mono text-white/80 whitespace-pre-wrap overflow-x-auto">{{ sqlPreviewContent }}</pre>
+        </div>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>

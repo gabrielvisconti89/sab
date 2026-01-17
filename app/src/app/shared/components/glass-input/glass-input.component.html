@@ -1,0 +1,9 @@
+<input
+  [type]="type"
+  [value]="value"
+  [placeholder]="placeholder"
+  [disabled]="disabled"
+  (input)="onInput($event)"
+  (blur)="onBlur()"
+  class="block w-full bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-white/50 px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+/>

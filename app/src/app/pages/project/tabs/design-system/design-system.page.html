@@ -1,0 +1,402 @@
+<div class="pb-4 px-4">
+  <!-- Section Navigation -->
+  <div class="overflow-x-auto mt-2 mb-6 -mx-4 px-4 hide-scrollbar">
+    <div class="flex gap-3 min-w-max">
+      <button
+        *ngFor="let section of sections"
+        (click)="selectSection(section)"
+        [class]="activeSection === section.id
+          ? 'flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white font-medium whitespace-nowrap'
+          : 'flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/70 whitespace-nowrap'"
+      >
+        <ion-icon [name]="section.icon" class="text-lg"></ion-icon>
+        {{ section.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- COLORS SECTION -->
+  <div *ngIf="activeSection === 'colors'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Paleta de Cores</h2>
+
+    <!-- Main Colors -->
+    <div class="glass-card">
+      <h3 class="font-medium text-white mb-4">Cores Principais</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div *ngFor="let field of colorFields" class="space-y-2">
+          <label class="text-sm text-white/60">{{ field.label }}</label>
+          <div class="flex items-center gap-2">
+            <input
+              type="color"
+              [(ngModel)]="colors[field.key]"
+              class="w-10 h-10 rounded-lg cursor-pointer border-0"
+            />
+            <ion-input
+              [(ngModel)]="colors[field.key]"
+              class="flex-1 glass-input text-sm uppercase text-white"
+            ></ion-input>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark Mode Config -->
+    <div class="glass-card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-medium text-white">Modo Escuro</h3>
+        <ion-toggle [(ngModel)]="darkMode.enabled"></ion-toggle>
+      </div>
+
+      <div *ngIf="darkMode.enabled" class="space-y-4">
+        <div>
+          <label class="text-sm text-white/60 mb-2 block">Tema Padrão</label>
+          <ion-segment [(ngModel)]="darkMode.defaultTheme">
+            <ion-segment-button value="light">
+              <ion-icon name="sunny-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="dark">
+              <ion-icon name="moon-outline"></ion-icon>
+            </ion-segment-button>
+            <ion-segment-button value="system">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+            </ion-segment-button>
+          </ion-segment>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div *ngFor="let field of darkModeColorFields" class="space-y-2">
+            <label class="text-sm text-white/60">{{ field.label }}</label>
+            <div class="flex items-center gap-2">
+              <input
+                type="color"
+                [(ngModel)]="darkMode[field.key]"
+                class="w-10 h-10 rounded-lg cursor-pointer border-0"
+              />
+              <ion-input
+                [(ngModel)]="darkMode[field.key]"
+                class="flex-1 glass-input text-sm uppercase text-white"
+              ></ion-input>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color Preview -->
+    <div class="glass-card">
+      <h3 class="font-medium text-white mb-4">Preview</h3>
+      <div class="p-4 rounded-xl" [style.background-color]="previewDarkMode ? darkMode.backgroundDark : colors.background">
+        <div class="flex gap-2 mb-4">
+          <button
+            class="px-4 py-2 rounded-lg text-white text-sm font-medium"
+            [style.background-color]="colors.primary"
+          >Primário</button>
+          <button
+            class="px-4 py-2 rounded-lg text-white text-sm font-medium"
+            [style.background-color]="colors.secondary"
+          >Secundário</button>
+          <button
+            class="px-4 py-2 rounded-lg text-white text-sm font-medium"
+            [style.background-color]="colors.accent"
+          >Destaque</button>
+        </div>
+        <div class="p-3 rounded-lg" [style.background-color]="previewDarkMode ? darkMode.surfaceDark : colors.surface">
+          <p
+            class="font-medium"
+            [style.color]="previewDarkMode ? darkMode.textPrimaryDark : colors.textPrimary"
+          >Texto Primário</p>
+          <p
+            class="text-sm"
+            [style.color]="previewDarkMode ? darkMode.textSecondaryDark : colors.textSecondary"
+          >Texto secundário de exemplo</p>
+        </div>
+        <div class="flex gap-2 mt-4">
+          <span class="px-2 py-1 rounded text-white text-xs" [style.background-color]="colors.success">Sucesso</span>
+          <span class="px-2 py-1 rounded text-white text-xs" [style.background-color]="colors.warning">Alerta</span>
+          <span class="px-2 py-1 rounded text-white text-xs" [style.background-color]="colors.error">Erro</span>
+          <span class="px-2 py-1 rounded text-white text-xs" [style.background-color]="colors.info">Info</span>
+        </div>
+      </div>
+      <div class="flex justify-end mt-2">
+        <ion-button fill="clear" size="small" (click)="previewDarkMode = !previewDarkMode" class="text-white/70">
+          <ion-icon [name]="previewDarkMode ? 'sunny-outline' : 'moon-outline'" slot="start"></ion-icon>
+          {{ previewDarkMode ? 'Light' : 'Dark' }}
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY SECTION -->
+  <div *ngIf="activeSection === 'typography'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Tipografia</h2>
+
+    <!-- Font Selection -->
+    <div class="glass-card space-y-4">
+      <h3 class="font-medium text-white">Fontes</h3>
+
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Fonte Principal</label>
+        <ion-select [(ngModel)]="typography.primaryFont" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let font of fontOptions" [value]="font">{{ font }}</ion-select-option>
+        </ion-select>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Fonte Secundária</label>
+        <ion-select [(ngModel)]="typography.secondaryFont" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let font of fontOptions" [value]="font">{{ font }}</ion-select-option>
+        </ion-select>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Fonte Monoespaçada</label>
+        <ion-select [(ngModel)]="typography.monospaceFont" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let font of monoFontOptions" [value]="font">{{ font }}</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+
+    <!-- Type Scale -->
+    <div class="glass-card">
+      <h3 class="font-medium text-white mb-4">Escala Tipográfica</h3>
+      <div class="space-y-4">
+        <div *ngFor="let scale of typography.scale" class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+          <div>
+            <span
+              class="block text-white"
+              [style.font-size.px]="scale.size"
+              [style.font-weight]="scale.weight"
+              [style.line-height]="scale.lineHeight"
+            >{{ scale.name }}</span>
+          </div>
+          <div class="text-right text-sm text-white/50">
+            <span>{{ scale.size }}px</span> /
+            <span>{{ scale.weight }}</span> /
+            <span>{{ scale.lineHeight }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPONENTS SECTION -->
+  <div *ngIf="activeSection === 'components'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Configuração de Componentes</h2>
+
+    <!-- Buttons -->
+    <div class="glass-card space-y-4">
+      <h3 class="font-medium text-white">Botões</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Estilo</label>
+          <ion-select [(ngModel)]="components.buttons.style" interface="action-sheet" class="glass-input text-white w-full">
+            <ion-select-option *ngFor="let style of buttonStyles" [value]="style">{{ style }}</ion-select-option>
+          </ion-select>
+        </div>
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Border Radius</label>
+          <ion-input type="number" [(ngModel)]="components.buttons.borderRadius" class="glass-input text-white"></ion-input>
+        </div>
+      </div>
+      <ion-item lines="none" class="--ion-item-background: transparent;">
+        <ion-checkbox [(ngModel)]="components.buttons.withIcons" slot="start"></ion-checkbox>
+        <ion-label class="text-white">Suporte a ícones</ion-label>
+      </ion-item>
+    </div>
+
+    <!-- Cards -->
+    <div class="glass-card space-y-4">
+      <h3 class="font-medium text-white">Cards</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Elevação</label>
+          <ion-input type="number" [(ngModel)]="components.cards.elevation" min="0" max="5" class="glass-input text-white"></ion-input>
+        </div>
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Border Radius</label>
+          <ion-input type="number" [(ngModel)]="components.cards.borderRadius" class="glass-input text-white"></ion-input>
+        </div>
+      </div>
+      <ion-item lines="none" class="--ion-item-background: transparent;">
+        <ion-checkbox [(ngModel)]="components.cards.hasBorder" slot="start"></ion-checkbox>
+        <ion-label class="text-white">Mostrar borda</ion-label>
+      </ion-item>
+    </div>
+
+    <!-- Inputs -->
+    <div class="glass-card space-y-4">
+      <h3 class="font-medium text-white">Inputs</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Estilo</label>
+          <ion-select [(ngModel)]="components.inputs.style" interface="action-sheet" class="glass-input text-white w-full">
+            <ion-select-option *ngFor="let style of inputStyles" [value]="style">{{ style }}</ion-select-option>
+          </ion-select>
+        </div>
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Label</label>
+          <ion-select [(ngModel)]="components.inputs.labelStyle" interface="action-sheet" class="glass-input text-white w-full">
+            <ion-select-option *ngFor="let style of labelStyles" [value]="style">{{ style }}</ion-select-option>
+          </ion-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals & Toasts -->
+    <div class="glass-card space-y-4">
+      <h3 class="font-medium text-white">Modals e Toasts</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Border Radius Modal</label>
+          <ion-input type="number" [(ngModel)]="components.modals.borderRadius" class="glass-input text-white"></ion-input>
+        </div>
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Posição Toast</label>
+          <ion-select [(ngModel)]="components.toasts.position" interface="action-sheet" class="glass-input text-white w-full">
+            <ion-select-option *ngFor="let pos of toastPositions" [value]="pos">{{ pos }}</ion-select-option>
+          </ion-select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ICONS SECTION -->
+  <div *ngIf="activeSection === 'icons'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Iconografia</h2>
+
+    <div class="glass-card space-y-4">
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Biblioteca</label>
+        <ion-select [(ngModel)]="iconography.library" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let lib of iconLibraries" [value]="lib">{{ lib }}</ion-select-option>
+        </ion-select>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Estilo</label>
+        <ion-select [(ngModel)]="iconography.style" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let style of iconStyles" [value]="style">{{ style }}</ion-select-option>
+        </ion-select>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Tamanho Padrão (px)</label>
+        <ion-input type="number" [(ngModel)]="iconography.defaultSize" class="glass-input text-white"></ion-input>
+      </div>
+
+      <!-- Icon Preview -->
+      <div class="mt-4 p-4 bg-white/5 rounded-lg">
+        <p class="text-sm text-white/50 mb-2">Preview</p>
+        <div class="flex gap-4">
+          <ion-icon name="home-outline" [style.font-size.px]="iconography.defaultSize" class="text-primary"></ion-icon>
+          <ion-icon name="person-outline" [style.font-size.px]="iconography.defaultSize" class="text-primary"></ion-icon>
+          <ion-icon name="settings-outline" [style.font-size.px]="iconography.defaultSize" class="text-primary"></ion-icon>
+          <ion-icon name="heart-outline" [style.font-size.px]="iconography.defaultSize" class="text-primary"></ion-icon>
+          <ion-icon name="star-outline" [style.font-size.px]="iconography.defaultSize" class="text-primary"></ion-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANIMATIONS SECTION -->
+  <div *ngIf="activeSection === 'animations'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Animações</h2>
+
+    <div class="glass-card space-y-4">
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Nível de Animação</label>
+        <ion-segment [(ngModel)]="animations.level">
+          <ion-segment-button value="minimal">Mínimo</ion-segment-button>
+          <ion-segment-button value="normal">Normal</ion-segment-button>
+          <ion-segment-button value="enhanced">Avançado</ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Duração (ms)</label>
+          <ion-input type="number" [(ngModel)]="animations.defaultDuration" class="glass-input text-white"></ion-input>
+        </div>
+        <div>
+          <label class="text-sm text-white/60 mb-1 block">Easing</label>
+          <ion-select [(ngModel)]="animations.easing" interface="action-sheet" class="glass-input text-white w-full">
+            <ion-select-option *ngFor="let e of easingOptions" [value]="e">{{ e }}</ion-select-option>
+          </ion-select>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Estilo de Loading</label>
+        <ion-select [(ngModel)]="animations.loadingStyle" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let style of loadingStyles" [value]="style">{{ style }}</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOICE & TONE SECTION -->
+  <div *ngIf="activeSection === 'voice'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Voz e Tom</h2>
+
+    <div class="glass-card space-y-4">
+      <div>
+        <label class="text-sm text-white/60 mb-2 block">Formalidade (1-5)</label>
+        <ion-range [(ngModel)]="voiceTone.formality" min="1" max="5" step="1" snaps="true" pin="true">
+          <ion-label slot="start" class="text-white/50">Casual</ion-label>
+          <ion-label slot="end" class="text-white/50">Formal</ion-label>
+        </ion-range>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/60 mb-2 block">Tecnicidade (1-5)</label>
+        <ion-range [(ngModel)]="voiceTone.technicality" min="1" max="5" step="1" snaps="true" pin="true">
+          <ion-label slot="start" class="text-white/50">Simples</ion-label>
+          <ion-label slot="end" class="text-white/50">Técnico</ion-label>
+        </ion-range>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/60 mb-2 block">Tratamento</label>
+        <ion-segment [(ngModel)]="voiceTone.treatment">
+          <ion-segment-button value="voce">Você</ion-segment-button>
+          <ion-segment-button value="tu">Tu</ion-segment-button>
+          <ion-segment-button value="senhor">Senhor(a)</ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <div>
+        <label class="text-sm text-white/60 mb-2 block">Personalidade</label>
+        <div class="flex flex-wrap gap-2">
+          <button
+            *ngFor="let trait of personalityOptions"
+            (click)="togglePersonality(trait)"
+            [class]="voiceTone.personality.includes(trait)
+              ? 'px-3 py-1.5 rounded-full bg-primary text-white text-sm'
+              : 'px-3 py-1.5 rounded-full bg-white/10 text-white/70 text-sm'"
+          >{{ trait }}</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-sm text-white/60">Exemplos de Mensagens</label>
+          <ion-button fill="clear" size="small" (click)="addExample()" class="text-white/70">
+            <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="space-y-2">
+          <div *ngFor="let example of voiceTone.examples; let i = index; trackBy: trackByIndex" class="flex gap-2">
+            <ion-input
+              [(ngModel)]="voiceTone.examples[i]"
+              placeholder="Exemplo de mensagem..."
+              class="flex-1 glass-input text-white"
+            ></ion-input>
+            <ion-button fill="clear" color="danger" (click)="removeExample(i)">
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

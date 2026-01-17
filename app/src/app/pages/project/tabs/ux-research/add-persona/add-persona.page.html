@@ -1,0 +1,111 @@
+<div class="pb-4 px-4">
+  <!-- Section Navigation Chips -->
+  <div class="overflow-x-auto mt-2 mb-4 -mx-4 px-4 hide-scrollbar">
+    <div class="flex gap-3 min-w-max">
+      <button
+        *ngFor="let section of sections"
+        (click)="selectSection(section)"
+        [class]="activeSection === section.id
+          ? 'flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500 text-white font-medium whitespace-nowrap'
+          : 'flex items-center gap-2 px-4 py-2 rounded-full bg-slate-700/50 text-white/70 whitespace-nowrap hover:bg-slate-700'"
+      >
+        <ion-icon [name]="section.icon" class="text-lg"></ion-icon>
+        {{ section.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div class="mb-4">
+    <h2 class="text-xl font-semibold text-white">{{ isEditing ? 'Editar' : 'Nova' }} Persona</h2>
+  </div>
+
+  <!-- Form Card -->
+  <div class="p-6 rounded-3xl glass-morphism space-y-4">
+    <!-- Nome -->
+    <app-form-field
+      label="Nome da persona"
+      [required]="true"
+      [(ngModel)]="form.name"
+      placeholder="Ex: Rafael Dev"
+    ></app-form-field>
+
+    <!-- Faixa Etária e Profissão -->
+    <div class="grid grid-cols-2 gap-4">
+      <app-form-field
+        label="Faixa etária"
+        [(ngModel)]="form.ageRange"
+        placeholder="Ex: 25-45 anos"
+      ></app-form-field>
+      <app-form-field
+        label="Profissão"
+        [(ngModel)]="form.profession"
+        placeholder="Ex: Desenvolvedor"
+      ></app-form-field>
+    </div>
+
+    <!-- Perfil Técnico -->
+    <app-form-field
+      label="Perfil técnico"
+      [(ngModel)]="form.technicalProfile"
+      placeholder="Ex: Intermediário a Avançado"
+    ></app-form-field>
+
+    <!-- Contexto de Uso -->
+    <app-form-field
+      label="Contexto de uso"
+      type="textarea"
+      [(ngModel)]="form.usageContext"
+      placeholder="Quando e como essa persona usa o app..."
+      [rows]="3"
+    ></app-form-field>
+
+    <!-- Frustrações -->
+    <app-form-field
+      label="Frustrações atuais"
+      type="textarea"
+      [(ngModel)]="form.frustrations"
+      placeholder="Principais dores e frustrações dessa persona..."
+      [rows]="3"
+    ></app-form-field>
+
+    <!-- Objetivos -->
+    <app-form-field
+      label="Objetivos"
+      type="textarea"
+      [(ngModel)]="form.objectives"
+      placeholder="O que essa persona deseja alcançar..."
+      [rows]="3"
+    ></app-form-field>
+
+    <!-- Persona Principal Toggle -->
+    <div class="flex items-center justify-between p-4 bg-black/20 border border-white/10 rounded-xl">
+      <div class="mr-4">
+        <span class="text-white font-medium">Persona Principal</span>
+        <p class="text-xs text-white/50 mt-0.5">Marcar como a persona mais importante do projeto</p>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" [(ngModel)]="form.isPrimary" class="sr-only peer" />
+        <div class="w-11 h-6 bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="flex gap-3 mt-6">
+    <button
+      (click)="goBack()"
+      class="flex-1 py-3 rounded-2xl bg-slate-700/50 text-white/70 font-medium hover:bg-slate-700 transition-colors"
+    >
+      Cancelar
+    </button>
+    <app-btn-primary
+      [disabled]="!form.name?.trim()"
+      (btnClick)="save()"
+      [fullWidth]="false"
+      class="flex-1"
+    >
+      {{ isEditing ? 'Salvar' : 'Criar Persona' }}
+    </app-btn-primary>
+  </div>
+</div>

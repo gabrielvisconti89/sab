@@ -1,0 +1,279 @@
+<div class="pb-4 px-4">
+  <!-- Section Navigation -->
+  <div class="overflow-x-auto mt-2 mb-6 -mx-4 px-4 hide-scrollbar">
+    <div class="flex gap-3 min-w-max">
+      <button *ngFor="let section of sections" (click)="selectSection(section)"
+        [class]="activeSection === section.id
+          ? 'flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white font-medium whitespace-nowrap'
+          : 'flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/70 whitespace-nowrap'">
+        <ion-icon [name]="section.icon" class="text-lg"></ion-icon>
+        {{ section.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- APIs Section -->
+  <div *ngIf="activeSection === 'apis'" class="space-y-4">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-white">APIs Externas</h2>
+      <button
+        (click)="openCreateApi()"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors"
+      >
+        <ion-icon name="add" class="text-base"></ion-icon>
+        Nova API
+      </button>
+    </div>
+
+    <div *ngFor="let api of externalApis" class="glass-card">
+      <div class="flex justify-between items-start mb-2">
+        <div>
+          <h3 class="font-semibold text-white flex items-center gap-2">
+            {{ api.name }}
+            <span class="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">{{ api.category }}</span>
+          </h3>
+          <p class="text-sm text-white/50">{{ api.baseUrl }}</p>
+        </div>
+        <div class="flex gap-1">
+          <ion-button fill="clear" size="small" (click)="openEditApi(api)" class="text-white/70"><ion-icon slot="icon-only" name="create-outline"></ion-icon></ion-button>
+          <ion-button fill="clear" size="small" color="danger" (click)="deleteApi(api)"><ion-icon slot="icon-only" name="trash-outline"></ion-icon></ion-button>
+        </div>
+      </div>
+      <p class="text-sm text-white/60 mb-2">{{ api.purpose }}</p>
+      <div class="flex flex-wrap gap-1">
+        <span *ngFor="let env of api.envVariables" class="text-xs bg-white/10 text-white/60 px-2 py-1 rounded">{{ env }}</span>
+      </div>
+    </div>
+    <div *ngIf="externalApis.length === 0" class="text-center py-12">
+      <ion-icon name="cloud-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhuma API configurada</p>
+    </div>
+  </div>
+
+  <!-- Webhooks Received -->
+  <div *ngIf="activeSection === 'webhooks-in'" class="space-y-4">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-white">Webhooks Recebidos</h2>
+      <button
+        (click)="openCreateWebhook('received')"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors"
+      >
+        <ion-icon name="add" class="text-base"></ion-icon>
+        Novo
+      </button>
+    </div>
+    <div *ngFor="let wh of webhooksReceived" class="glass-card">
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="font-medium text-white">{{ wh.event }}</h3>
+          <p class="text-sm text-white/50">{{ wh.source }} → {{ wh.endpoint }}</p>
+          <p class="text-sm text-white/60 mt-1">{{ wh.action }}</p>
+        </div>
+        <ion-button fill="clear" size="small" color="danger" (click)="deleteWebhook(wh, 'received')">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+    <div *ngIf="webhooksReceived.length === 0" class="text-center py-12">
+      <ion-icon name="arrow-down-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhum webhook recebido</p>
+    </div>
+  </div>
+
+  <!-- Webhooks Sent -->
+  <div *ngIf="activeSection === 'webhooks-out'" class="space-y-4">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold text-white">Webhooks Enviados</h2>
+      <button
+        (click)="openCreateWebhook('sent')"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors"
+      >
+        <ion-icon name="add" class="text-base"></ion-icon>
+        Novo
+      </button>
+    </div>
+    <div *ngFor="let wh of webhooksSent" class="glass-card">
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 class="font-medium text-white">{{ wh.event }}</h3>
+          <p class="text-sm text-white/50">→ {{ wh.endpoint }}</p>
+          <p class="text-sm text-white/60 mt-1 font-mono">{{ wh.payload }}</p>
+        </div>
+        <ion-button fill="clear" size="small" color="danger" (click)="deleteWebhook(wh, 'sent')">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+    <div *ngIf="webhooksSent.length === 0" class="text-center py-12">
+      <ion-icon name="arrow-up-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhum webhook enviado</p>
+    </div>
+  </div>
+</div>
+
+<!-- API Modal -->
+<ion-modal [isOpen]="showApiModal" (didDismiss)="showApiModal = false">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="showApiModal = false"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">{{ apiForm.id === 0 ? 'Nova API' : 'Editar API' }}</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Nome -->
+          <app-form-field
+            label="Nome"
+            [required]="true"
+            [(ngModel)]="apiForm.name"
+            placeholder="Ex: Stripe"
+          ></app-form-field>
+
+          <!-- Categoria e Auth -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Categoria</label>
+              <button
+                type="button"
+                (click)="openCategorySelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ apiForm.category || 'Selecione...' }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Auth</label>
+              <button
+                type="button"
+                (click)="openAuthTypeSelector()"
+                class="w-full bg-black/20 border border-white/10 rounded-xl text-white px-4 py-3 text-base text-left flex items-center justify-between focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+              >
+                <span>{{ apiForm.authType || 'Selecione...' }}</span>
+                <ion-icon name="chevron-expand-outline" class="text-white/50"></ion-icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Base URL -->
+          <app-form-field
+            label="Base URL"
+            [(ngModel)]="apiForm.baseUrl"
+            placeholder="https://api.example.com"
+          ></app-form-field>
+
+          <!-- Variáveis de Ambiente -->
+          <div>
+            <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">Variáveis de Ambiente</label>
+            <input
+              type="text"
+              [value]="apiForm.envVariables?.join(', ')"
+              (input)="onEnvVarsChange($event)"
+              placeholder="Separadas por vírgula: API_KEY, SECRET"
+              class="block w-full bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-white/50 px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+            />
+          </div>
+
+          <!-- Propósito -->
+          <app-form-field
+            label="Propósito"
+            type="textarea"
+            [(ngModel)]="apiForm.purpose"
+            placeholder="Para que essa API será usada..."
+            [rows]="3"
+          ></app-form-field>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!apiForm.name?.trim()"
+          (btnClick)="saveApi()"
+        >
+          Salvar
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- Webhook Modal -->
+<ion-modal [isOpen]="showWebhookModal" (didDismiss)="showWebhookModal = false">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="showWebhookModal = false"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">Novo Webhook</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Origem (only for received) -->
+          <app-form-field
+            *ngIf="webhookType === 'received'"
+            label="Origem"
+            [(ngModel)]="webhookForm.source"
+            placeholder="Ex: Stripe"
+          ></app-form-field>
+
+          <!-- Evento -->
+          <app-form-field
+            label="Evento"
+            [required]="true"
+            [(ngModel)]="webhookForm.event"
+            placeholder="Ex: payment.succeeded"
+          ></app-form-field>
+
+          <!-- Endpoint -->
+          <app-form-field
+            label="Endpoint"
+            [(ngModel)]="webhookForm.endpoint"
+            placeholder="/webhooks/..."
+          ></app-form-field>
+
+          <!-- Ação (only for received) -->
+          <app-form-field
+            *ngIf="webhookType === 'received'"
+            label="Ação"
+            [(ngModel)]="webhookForm.action"
+            placeholder="O que acontece quando receber?"
+          ></app-form-field>
+
+          <!-- Payload (only for sent) -->
+          <app-form-field
+            *ngIf="webhookType === 'sent'"
+            label="Payload"
+            [(ngModel)]="webhookForm.payload"
+            placeholder="{ ... }"
+          ></app-form-field>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!webhookForm.event?.trim()"
+          (btnClick)="saveWebhook()"
+        >
+          Salvar
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>

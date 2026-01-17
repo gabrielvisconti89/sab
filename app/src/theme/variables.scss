@@ -1,0 +1,143 @@
+// Software Architecture Builder - Theme Variables
+// Glassmorphism iOS 26 Design System
+
+:root {
+  // ========================================
+  // GRADIENT BACKGROUND (Navy Blue)
+  // ========================================
+  --gradient-start: #0f172a;   // slate-900
+  --gradient-mid: #1e3a5f;     // navy blue
+  --gradient-end: #0c4a6e;     // sky-900
+
+  // ========================================
+  // GLASSMORPHISM EFFECT
+  // ========================================
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-hover: rgba(255, 255, 255, 0.12);
+  --glass-bg-active: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-border-light: rgba(255, 255, 255, 0.1);
+  --glass-blur: 20px;
+  --glass-blur-light: 12px;
+
+  // ========================================
+  // IONIC OVERRIDES - Always Dark/Glass
+  // ========================================
+  --ion-background-color: transparent;
+  --ion-background-color-rgb: 15, 23, 42;
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255, 255, 255;
+
+  --ion-card-background: var(--glass-bg);
+  --ion-toolbar-background: transparent;
+  --ion-toolbar-color: #ffffff;
+  --ion-item-background: var(--glass-bg);
+
+  // Content background (for scrollable areas)
+  --ion-content-background: transparent;
+
+  // ========================================
+  // PRIMARY - Blue (padrão do app)
+  // ========================================
+  --ion-color-primary: #3b82f6;
+  --ion-color-primary-rgb: 59, 130, 246;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #2563eb;
+  --ion-color-primary-tint: #60a5fa;
+
+  // ========================================
+  // SECONDARY - Teal
+  // ========================================
+  --ion-color-secondary: #2dd4bf;
+  --ion-color-secondary-rgb: 45, 212, 191;
+  --ion-color-secondary-contrast: #000000;
+  --ion-color-secondary-contrast-rgb: 0, 0, 0;
+  --ion-color-secondary-shade: #14b8a6;
+  --ion-color-secondary-tint: #5eead4;
+
+  // ========================================
+  // TERTIARY - Amber (Accent)
+  // ========================================
+  --ion-color-tertiary: #fbbf24;
+  --ion-color-tertiary-rgb: 251, 191, 36;
+  --ion-color-tertiary-contrast: #000000;
+  --ion-color-tertiary-contrast-rgb: 0, 0, 0;
+  --ion-color-tertiary-shade: #f59e0b;
+  --ion-color-tertiary-tint: #fcd34d;
+
+  // ========================================
+  // SUCCESS - Emerald
+  // ========================================
+  --ion-color-success: #34d399;
+  --ion-color-success-rgb: 52, 211, 153;
+  --ion-color-success-contrast: #000000;
+  --ion-color-success-contrast-rgb: 0, 0, 0;
+  --ion-color-success-shade: #10b981;
+  --ion-color-success-tint: #6ee7b7;
+
+  // ========================================
+  // WARNING - Amber
+  // ========================================
+  --ion-color-warning: #fbbf24;
+  --ion-color-warning-rgb: 251, 191, 36;
+  --ion-color-warning-contrast: #000000;
+  --ion-color-warning-contrast-rgb: 0, 0, 0;
+  --ion-color-warning-shade: #f59e0b;
+  --ion-color-warning-tint: #fcd34d;
+
+  // ========================================
+  // DANGER - Red
+  // ========================================
+  --ion-color-danger: #f87171;
+  --ion-color-danger-rgb: 248, 113, 113;
+  --ion-color-danger-contrast: #000000;
+  --ion-color-danger-contrast-rgb: 0, 0, 0;
+  --ion-color-danger-shade: #ef4444;
+  --ion-color-danger-tint: #fca5a5;
+
+  // ========================================
+  // LIGHT - Transparent glass
+  // ========================================
+  --ion-color-light: rgba(255, 255, 255, 0.1);
+  --ion-color-light-rgb: 255, 255, 255;
+  --ion-color-light-contrast: #ffffff;
+  --ion-color-light-contrast-rgb: 255, 255, 255;
+  --ion-color-light-shade: rgba(255, 255, 255, 0.05);
+  --ion-color-light-tint: rgba(255, 255, 255, 0.15);
+
+  // ========================================
+  // MEDIUM - Gray (text secondary)
+  // ========================================
+  --ion-color-medium: rgba(255, 255, 255, 0.6);
+  --ion-color-medium-rgb: 255, 255, 255;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: rgba(255, 255, 255, 0.4);
+  --ion-color-medium-tint: rgba(255, 255, 255, 0.7);
+
+  // ========================================
+  // DARK - Deep navy
+  // ========================================
+  --ion-color-dark: #0f172a;
+  --ion-color-dark-rgb: 15, 23, 42;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #020617;
+  --ion-color-dark-tint: #1e293b;
+
+  // ========================================
+  // TYPOGRAPHY
+  // ========================================
+  --ion-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+
+  // ========================================
+  // TOUCH SPACING
+  // ========================================
+  --touch-target-min: 48px;
+  --touch-target-comfortable: 56px;
+  --spacing-card: 20px;
+  --border-radius-card: 20px;
+  --border-radius-button: 14px;
+  --border-radius-input: 12px;
+}

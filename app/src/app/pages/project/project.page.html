@@ -1,0 +1,149 @@
+<!-- Background -->
+<div class="fixed inset-0 -z-10 bg-slate-900"></div>
+
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" aria-label="Voltar">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ project?.name || 'Projeto' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openProjectMenu()" aria-label="Menu do projeto">
+        <ion-icon slot="icon-only" name="ellipsis-horizontal"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="project-container mx-auto">
+    <!-- Progress Bar -->
+    <div class="pt-4 pb-2 px-4">
+      <div class="flex justify-between items-end mb-2">
+        <span class="text-xs font-medium text-gray-400">Progresso geral</span>
+        <span
+          class="text-xs font-bold"
+          [ngClass]="{
+            'text-emerald': getOverallProgress() >= 75,
+            'text-amber': getOverallProgress() >= 50 && getOverallProgress() < 75,
+            'text-red': getOverallProgress() < 50
+          }"
+        >{{ getOverallProgress() }}%</span>
+      </div>
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [ngClass]="{
+            'emerald': getOverallProgress() >= 75,
+            'amber': getOverallProgress() >= 50 && getOverallProgress() < 75,
+            'red': getOverallProgress() < 50
+          }"
+          [style.width.%]="getOverallProgress()"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Tab Navigation - Category Cards -->
+    <div class="py-3 overflow-x-auto px-4 hide-scrollbar">
+      <div class="flex gap-3 min-w-max" role="tablist" aria-label="Navegação das abas do projeto">
+        <button
+          *ngFor="let tab of tabs"
+          (click)="selectTab(tab)"
+          class="category-card flex-shrink-0 flex flex-col items-center justify-center rounded-2xl transition-all duration-200"
+          [ngClass]="isTabActive(tab.id) ? 'category-card-active' : 'category-card-inactive'"
+          role="tab"
+          [attr.aria-selected]="isTabActive(tab.id)"
+          [attr.aria-label]="tab.label"
+          [id]="'tab-' + tab.id"
+        >
+          <ion-icon [name]="tab.icon" class="text-2xl mb-2"></ion-icon>
+          <span class="text-[10px] font-medium tracking-wide uppercase">{{ tab.label }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Router Outlet -->
+    <ion-router-outlet [animated]="false"></ion-router-outlet>
+  </div>
+</ion-content>
+
+<!-- Export Modal -->
+<app-export-modal
+  [isOpen]="showExportModal"
+  [project]="project"
+  [tables]="projectTables"
+  (close)="closeExportModal()"
+></app-export-modal>
+
+<!-- Settings Modal -->
+<ion-modal [isOpen]="showSettingsModal" (didDismiss)="closeSettingsModal()" aria-labelledby="settings-modal-title">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="closeSettingsModal()"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 id="settings-modal-title" class="text-lg font-bold text-white text-center">Configurações</h1>
+        <button
+          (click)="saveSettings()"
+          [disabled]="!settingsForm.name.trim()"
+          class="justify-self-end text-sm font-medium text-blue-400 hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          Salvar
+        </button>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Nome -->
+          <app-form-field
+            label="Nome do projeto"
+            [(ngModel)]="settingsForm.name"
+            placeholder="Nome do projeto"
+          ></app-form-field>
+
+          <!-- Descrição -->
+          <app-form-field
+            label="Descrição"
+            type="textarea"
+            [(ngModel)]="settingsForm.description"
+            placeholder="Descrição do projeto..."
+            [rows]="3"
+          ></app-form-field>
+
+          <!-- Banco de dados -->
+          <div>
+            <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">
+              Banco de dados
+            </label>
+            <ion-select
+              [(ngModel)]="settingsForm.databaseType"
+              interface="action-sheet"
+              placeholder="Selecione"
+              class="w-full bg-black/20 border border-white/10 rounded-xl text-white"
+            >
+              <ion-select-option *ngFor="let db of databaseTypes" [value]="db.value">
+                {{ db.label }}
+              </ion-select-option>
+            </ion-select>
+          </div>
+
+          <!-- Prefixo de tabelas -->
+          <app-form-field
+            label="Prefixo de tabelas"
+            [(ngModel)]="settingsForm.tablePrefix"
+            placeholder="Ex: app_, tbl_"
+          ></app-form-field>
+        </div>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>

@@ -1,0 +1,15 @@
+<button
+  [type]="type"
+  [disabled]="disabled || loading"
+  (click)="onClick()"
+  class="py-4 rounded-2xl bg-blue-500 hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold text-lg transition-all border border-white/10 shadow-lg shadow-blue-500/20"
+  [class.w-full]="fullWidth"
+>
+  <span *ngIf="loading" class="flex items-center justify-center gap-2">
+    <ion-spinner name="crescent" class="w-5 h-5"></ion-spinner>
+    <ng-content></ng-content>
+  </span>
+  <ng-container *ngIf="!loading">
+    <ng-content></ng-content>
+  </ng-container>
+</button>

@@ -1,0 +1,94 @@
+<div class="pb-4 px-4">
+  <h2 class="text-xl font-semibold text-white mb-6">Stack Backend</h2>
+
+  <!-- PHP Config -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-4">PHP</h3>
+    <div>
+      <label class="text-sm text-white/60 mb-1 block">Versão</label>
+      <ion-input [(ngModel)]="php.version" class="glass-input text-white"></ion-input>
+    </div>
+    <div class="mt-4">
+      <label class="text-sm text-white/60 mb-2 block">Extensões</label>
+      <div class="flex flex-wrap gap-2">
+        <button
+          *ngFor="let ext of extensionOptions"
+          (click)="toggleExtension(ext)"
+          [class]="php.extensions.includes(ext)
+            ? 'px-3 py-1.5 rounded-full bg-primary text-white text-sm'
+            : 'px-3 py-1.5 rounded-full bg-white/10 text-white/70 text-sm'"
+        >{{ ext }}</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Laravel Config -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-4">Laravel</h3>
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Versão</label>
+        <ion-input [(ngModel)]="laravel.version" class="glass-input text-white"></ion-input>
+      </div>
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Starter Kit</label>
+        <ion-select [(ngModel)]="laravel.starterKit" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let kit of starterKitOptions" [value]="kit">{{ kit }}</ion-select-option>
+        </ion-select>
+      </div>
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">API Auth</label>
+        <ion-select [(ngModel)]="laravel.apiAuth" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let auth of apiAuthOptions" [value]="auth">{{ auth }}</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Database -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-4">Banco de Dados</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="text-sm text-white/60 mb-1 block">Driver</label>
+        <ion-select [(ngModel)]="database.driver" interface="action-sheet" class="glass-input text-white w-full">
+          <ion-select-option *ngFor="let driver of databaseDrivers" [value]="driver">{{ driver }}</ion-select-option>
+        </ion-select>
+      </div>
+      <div class="flex items-center">
+        <ion-item lines="none" class="--ion-item-background: transparent;">
+          <ion-checkbox [(ngModel)]="database.redis" slot="start"></ion-checkbox>
+          <ion-label class="text-white">Redis</ion-label>
+        </ion-item>
+      </div>
+    </div>
+  </div>
+
+  <!-- Packages -->
+  <div class="glass-card mb-4">
+    <h3 class="font-medium text-white mb-4">Pacotes</h3>
+    <div class="space-y-2">
+      <div *ngFor="let pkg of packages" class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+        <div class="flex items-center gap-3">
+          <ion-checkbox [(ngModel)]="pkg.enabled"></ion-checkbox>
+          <div>
+            <span class="font-medium text-white">{{ pkg.name }}</span>
+            <span class="text-sm text-white/50 ml-2">{{ pkg.version }}</span>
+            <span *ngIf="pkg.isDev" class="text-xs bg-yellow-500/20 text-yellow-300 px-1.5 py-0.5 rounded ml-2">dev</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <div class="glass-card">
+    <h3 class="font-medium text-white mb-4">Serviços</h3>
+    <div class="space-y-3">
+      <div *ngFor="let service of services | keyvalue">
+        <label class="text-sm text-white/60 mb-1 block capitalize">{{ service.key }}</label>
+        <ion-input [(ngModel)]="services[service.key]" class="glass-input text-white"></ion-input>
+      </div>
+    </div>
+  </div>
+</div>

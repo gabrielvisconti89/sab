@@ -1,0 +1,456 @@
+<div class="pb-4 px-4">
+  <!-- Section Navigation -->
+  <div class="overflow-x-auto mt-2 mb-6 -mx-4 px-4 hide-scrollbar">
+    <div class="flex gap-3 min-w-max">
+      <button
+        *ngFor="let section of sections"
+        (click)="selectSection(section)"
+        [class]="activeSection === section.id
+          ? 'flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-white font-medium whitespace-nowrap'
+          : 'flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white/70 whitespace-nowrap'"
+      >
+        <ion-icon [name]="section.icon" class="text-lg"></ion-icon>
+        {{ section.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- FUNCTIONAL REQUIREMENTS SECTION -->
+  <div *ngIf="activeSection === 'functional'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Requisitos Funcionais</h2>
+
+    <!-- Authentication Accordion -->
+    <div class="glass-card overflow-hidden !p-0">
+      <button
+        (click)="toggleCategory('authentication')"
+        class="w-full flex items-center justify-between p-4 text-left"
+      >
+        <div class="flex items-center gap-3">
+          <ion-icon name="lock-closed-outline" class="text-xl text-primary"></ion-icon>
+          <span class="font-medium text-white">Autenticação</span>
+        </div>
+        <ion-icon [name]="expandedCategories['authentication'] ? 'chevron-up' : 'chevron-down'" class="text-white/50"></ion-icon>
+      </button>
+      <div *ngIf="expandedCategories['authentication']" class="border-t border-white/10 p-4 space-y-2">
+        <ion-item *ngFor="let req of authRequirements | keyvalue" lines="none" class="--ion-item-background: transparent;">
+          <ion-checkbox [(ngModel)]="req.value.value" slot="start"></ion-checkbox>
+          <ion-label class="text-white">{{ req.value.label }}</ion-label>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- User Management Accordion -->
+    <div class="glass-card overflow-hidden !p-0">
+      <button
+        (click)="toggleCategory('userManagement')"
+        class="w-full flex items-center justify-between p-4 text-left"
+      >
+        <div class="flex items-center gap-3">
+          <ion-icon name="people-outline" class="text-xl text-primary"></ion-icon>
+          <span class="font-medium text-white">Gerenciamento de Usuários</span>
+        </div>
+        <ion-icon [name]="expandedCategories['userManagement'] ? 'chevron-up' : 'chevron-down'" class="text-white/50"></ion-icon>
+      </button>
+      <div *ngIf="expandedCategories['userManagement']" class="border-t border-white/10 p-4 space-y-2">
+        <ion-item *ngFor="let req of userManagementRequirements | keyvalue" lines="none" class="--ion-item-background: transparent;">
+          <ion-checkbox [(ngModel)]="req.value.value" slot="start"></ion-checkbox>
+          <ion-label class="text-white">{{ req.value.label }}</ion-label>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- CRUD Entities Accordion -->
+    <div class="glass-card overflow-hidden !p-0">
+      <button
+        (click)="toggleCategory('crud')"
+        class="w-full flex items-center justify-between p-4 text-left"
+      >
+        <div class="flex items-center gap-3">
+          <ion-icon name="cube-outline" class="text-xl text-primary"></ion-icon>
+          <span class="font-medium text-white">Entidades CRUD</span>
+          <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full text-white">{{ crudEntities.length }}</span>
+        </div>
+        <ion-icon [name]="expandedCategories['crud'] ? 'chevron-up' : 'chevron-down'" class="text-white/50"></ion-icon>
+      </button>
+      <div *ngIf="expandedCategories['crud']" class="border-t border-white/10 p-4">
+        <div class="space-y-2 mb-4">
+          <div *ngFor="let entity of crudEntities" class="flex items-center justify-between p-3 bg-white/5 rounded-lg">
+            <div class="flex items-center gap-3">
+              <span class="font-medium text-white">{{ entity.name }}</span>
+              <div class="flex gap-1">
+                <span *ngFor="let op of getCrudOperations(entity)" class="text-xs bg-primary text-white px-1.5 py-0.5 rounded">{{ op }}</span>
+              </div>
+            </div>
+            <div class="flex gap-1">
+              <ion-button fill="clear" size="small" (click)="openEditCrud(entity)" class="text-white/70">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small" color="danger" (click)="deleteCrud(entity)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+        </div>
+        <button
+          (click)="openCreateCrud()"
+          class="w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 text-sm font-medium hover:bg-blue-500/30 transition-colors"
+        >
+          <ion-icon name="add" class="text-base"></ion-icon>
+          Nova Entidade
+        </button>
+      </div>
+    </div>
+
+    <!-- Notifications Accordion -->
+    <div class="glass-card overflow-hidden !p-0">
+      <button
+        (click)="toggleCategory('notifications')"
+        class="w-full flex items-center justify-between p-4 text-left"
+      >
+        <div class="flex items-center gap-3">
+          <ion-icon name="notifications-outline" class="text-xl text-primary"></ion-icon>
+          <span class="font-medium text-white">Notificações</span>
+        </div>
+        <ion-icon [name]="expandedCategories['notifications'] ? 'chevron-up' : 'chevron-down'" class="text-white/50"></ion-icon>
+      </button>
+      <div *ngIf="expandedCategories['notifications']" class="border-t border-white/10 p-4 space-y-2">
+        <ion-item *ngFor="let req of notificationRequirements | keyvalue" lines="none" class="--ion-item-background: transparent;">
+          <ion-checkbox [(ngModel)]="req.value.value" slot="start"></ion-checkbox>
+          <ion-label class="text-white">{{ req.value.label }}</ion-label>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- Search & Filters Accordion -->
+    <div class="glass-card overflow-hidden !p-0">
+      <button
+        (click)="toggleCategory('searchFilters')"
+        class="w-full flex items-center justify-between p-4 text-left"
+      >
+        <div class="flex items-center gap-3">
+          <ion-icon name="search-outline" class="text-xl text-primary"></ion-icon>
+          <span class="font-medium text-white">Busca e Filtros</span>
+        </div>
+        <ion-icon [name]="expandedCategories['searchFilters'] ? 'chevron-up' : 'chevron-down'" class="text-white/50"></ion-icon>
+      </button>
+      <div *ngIf="expandedCategories['searchFilters']" class="border-t border-white/10 p-4 space-y-2">
+        <ion-item *ngFor="let req of searchFilterRequirements | keyvalue" lines="none" class="--ion-item-background: transparent;">
+          <ion-checkbox [(ngModel)]="req.value.value" slot="start"></ion-checkbox>
+          <ion-label class="text-white">{{ req.value.label }}</ion-label>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- Reports Accordion -->
+    <div class="glass-card overflow-hidden !p-0">
+      <button
+        (click)="toggleCategory('reports')"
+        class="w-full flex items-center justify-between p-4 text-left"
+      >
+        <div class="flex items-center gap-3">
+          <ion-icon name="document-text-outline" class="text-xl text-primary"></ion-icon>
+          <span class="font-medium text-white">Relatórios e Exportação</span>
+        </div>
+        <ion-icon [name]="expandedCategories['reports'] ? 'chevron-up' : 'chevron-down'" class="text-white/50"></ion-icon>
+      </button>
+      <div *ngIf="expandedCategories['reports']" class="border-t border-white/10 p-4 space-y-2">
+        <ion-item *ngFor="let req of reportRequirements | keyvalue" lines="none" class="--ion-item-background: transparent;">
+          <ion-checkbox [(ngModel)]="req.value.value" slot="start"></ion-checkbox>
+          <ion-label class="text-white">{{ req.value.label }}</ion-label>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- Other Accordion -->
+    <div class="glass-card overflow-hidden !p-0">
+      <button
+        (click)="toggleCategory('other')"
+        class="w-full flex items-center justify-between p-4 text-left"
+      >
+        <div class="flex items-center gap-3">
+          <ion-icon name="apps-outline" class="text-xl text-primary"></ion-icon>
+          <span class="font-medium text-white">Outros</span>
+        </div>
+        <ion-icon [name]="expandedCategories['other'] ? 'chevron-up' : 'chevron-down'" class="text-white/50"></ion-icon>
+      </button>
+      <div *ngIf="expandedCategories['other']" class="border-t border-white/10 p-4 space-y-2">
+        <ion-item *ngFor="let req of otherRequirements | keyvalue" lines="none" class="--ion-item-background: transparent;">
+          <ion-checkbox [(ngModel)]="req.value.value" slot="start"></ion-checkbox>
+          <ion-label class="text-white">{{ req.value.label }}</ion-label>
+        </ion-item>
+      </div>
+    </div>
+  </div>
+
+  <!-- NON-FUNCTIONAL REQUIREMENTS SECTION -->
+  <div *ngIf="activeSection === 'non-functional'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Requisitos Não-Funcionais</h2>
+
+    <!-- Performance -->
+    <div class="p-6 rounded-3xl glass-morphism">
+      <h3 class="font-medium text-white mb-4 flex items-center gap-2">
+        <ion-icon name="speedometer-outline" class="text-blue-400"></ion-icon>
+        Performance
+      </h3>
+      <div class="space-y-4">
+        <div *ngFor="let req of performanceReqs | keyvalue" class="flex items-center justify-between">
+          <span class="text-white/60">{{ req.value.label }}</span>
+          <div class="flex items-center gap-2">
+            <input
+              type="number"
+              [(ngModel)]="req.value.value"
+              class="w-24 bg-black/20 border border-white/10 rounded-xl text-white text-right px-3 py-2 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+            />
+            <span class="text-white/50 w-8">{{ req.value.unit }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scalability -->
+    <div class="p-6 rounded-3xl glass-morphism">
+      <h3 class="font-medium text-white mb-4 flex items-center gap-2">
+        <ion-icon name="trending-up-outline" class="text-blue-400"></ion-icon>
+        Escalabilidade
+      </h3>
+      <div class="space-y-4">
+        <div *ngFor="let req of scalabilityReqs | keyvalue" class="flex items-center justify-between">
+          <span class="text-white/60">{{ req.value.label }}</span>
+          <div class="flex items-center gap-2">
+            <input
+              type="number"
+              [(ngModel)]="req.value.value"
+              class="w-24 bg-black/20 border border-white/10 rounded-xl text-white text-right px-3 py-2 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+            />
+            <span class="text-white/50 w-12">{{ req.value.unit }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Availability -->
+    <div class="p-6 rounded-3xl glass-morphism">
+      <h3 class="font-medium text-white mb-4 flex items-center gap-2">
+        <ion-icon name="cloud-done-outline" class="text-blue-400"></ion-icon>
+        Disponibilidade
+      </h3>
+      <div class="space-y-4">
+        <div *ngFor="let req of availabilityReqs | keyvalue" class="flex items-center justify-between">
+          <span class="text-white/60">{{ req.value.label }}</span>
+          <div class="flex items-center gap-2">
+            <input
+              type="number"
+              [(ngModel)]="req.value.value"
+              class="w-24 bg-black/20 border border-white/10 rounded-xl text-white text-right px-3 py-2 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+            />
+            <span class="text-white/50 w-8">{{ req.value.unit }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security -->
+    <div class="p-6 rounded-3xl glass-morphism">
+      <h3 class="font-medium text-white mb-4 flex items-center gap-2">
+        <ion-icon name="shield-checkmark-outline" class="text-blue-400"></ion-icon>
+        Segurança
+      </h3>
+      <div class="space-y-3">
+        <label *ngFor="let req of securityReqs | keyvalue" class="flex items-center gap-3 p-3 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors">
+          <input type="checkbox" [(ngModel)]="req.value.value" class="w-5 h-5 rounded border-white/30 bg-white/10 text-blue-500 focus:ring-blue-500/50" />
+          <span class="text-white">{{ req.value.label }}</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Backup -->
+    <div class="p-6 rounded-3xl glass-morphism">
+      <h3 class="font-medium text-white mb-4 flex items-center gap-2">
+        <ion-icon name="cloud-upload-outline" class="text-blue-400"></ion-icon>
+        Backup e Recuperação
+      </h3>
+      <div class="space-y-4">
+        <div *ngFor="let req of backupReqs | keyvalue">
+          <label class="block text-xs font-medium text-gray-300 mb-2 ml-1">{{ req.value.label }}</label>
+          <input
+            type="text"
+            [(ngModel)]="req.value.value"
+            class="block w-full bg-black/20 border border-white/10 rounded-xl text-white placeholder:text-white/50 px-4 py-3 text-base focus:outline-none focus:ring-1 focus:ring-white/30 transition-all"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOSCOW SECTION -->
+  <div *ngIf="activeSection === 'moscow'" class="space-y-4">
+    <h2 class="text-xl font-semibold text-white mb-6">Priorização MoSCoW</h2>
+
+    <div *ngFor="let cat of moscowCategories" class="glass-card overflow-hidden !p-0">
+      <div class="flex items-center justify-between p-4 border-b border-white/10">
+        <div class="flex items-center gap-2">
+          <ion-badge [color]="cat.color">{{ cat.label }}</ion-badge>
+          <span class="text-sm text-white/50">{{ moscow[cat.key].length }} itens</span>
+        </div>
+        <ion-button fill="clear" size="small" (click)="openAddMoscow(cat.key)" class="text-white/70">
+          <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+        </ion-button>
+      </div>
+      <div class="divide-y divide-white/10">
+        <div *ngFor="let item of moscow[cat.key]; let i = index" class="flex items-center justify-between p-3">
+          <span class="text-white/80">{{ item }}</span>
+          <div class="flex gap-1">
+            <ion-button
+              *ngIf="cat.key !== 'mustHave'"
+              fill="clear"
+              size="small"
+              (click)="moveMoscowItem(cat.key, i, 'up')"
+              class="text-white/50"
+            >
+              <ion-icon slot="icon-only" name="arrow-up-outline" class="text-sm"></ion-icon>
+            </ion-button>
+            <ion-button
+              *ngIf="cat.key !== 'wontHave'"
+              fill="clear"
+              size="small"
+              (click)="moveMoscowItem(cat.key, i, 'down')"
+              class="text-white/50"
+            >
+              <ion-icon slot="icon-only" name="arrow-down-outline" class="text-sm"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" size="small" color="danger" (click)="removeMoscowItem(cat.key, i)">
+              <ion-icon slot="icon-only" name="close-outline" class="text-sm"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+        <div *ngIf="moscow[cat.key].length === 0" class="p-4 text-center text-white/40">
+          Nenhum item
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CRUD ENTITY MODAL -->
+<ion-modal [isOpen]="showCrudModal" (didDismiss)="showCrudModal = false">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="showCrudModal = false"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">{{ crudForm.name ? 'Editar Entidade' : 'Nova Entidade' }}</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Nome da Entidade -->
+          <app-form-field
+            label="Nome da entidade"
+            [required]="true"
+            [(ngModel)]="crudForm.name"
+            placeholder="Ex: Usuários"
+          ></app-form-field>
+
+          <!-- Operações -->
+          <div>
+            <label class="block text-xs font-medium text-gray-300 mb-3 ml-1">Operações</label>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="flex items-center gap-3 p-3 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors">
+                <input type="checkbox" [(ngModel)]="crudForm.create" class="w-5 h-5 rounded border-white/30 bg-white/10 text-blue-500 focus:ring-blue-500/50" />
+                <span class="text-white">Criar</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors">
+                <input type="checkbox" [(ngModel)]="crudForm.list" class="w-5 h-5 rounded border-white/30 bg-white/10 text-blue-500 focus:ring-blue-500/50" />
+                <span class="text-white">Listar</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors">
+                <input type="checkbox" [(ngModel)]="crudForm.view" class="w-5 h-5 rounded border-white/30 bg-white/10 text-blue-500 focus:ring-blue-500/50" />
+                <span class="text-white">Visualizar</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors">
+                <input type="checkbox" [(ngModel)]="crudForm.edit" class="w-5 h-5 rounded border-white/30 bg-white/10 text-blue-500 focus:ring-blue-500/50" />
+                <span class="text-white">Editar</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors">
+                <input type="checkbox" [(ngModel)]="crudForm.delete" class="w-5 h-5 rounded border-white/30 bg-white/10 text-blue-500 focus:ring-blue-500/50" />
+                <span class="text-white">Excluir</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors">
+                <input type="checkbox" [(ngModel)]="crudForm.export" class="w-5 h-5 rounded border-white/30 bg-white/10 text-blue-500 focus:ring-blue-500/50" />
+                <span class="text-white">Exportar</span>
+              </label>
+              <label class="flex items-center gap-3 p-3 bg-black/20 border border-white/10 rounded-xl cursor-pointer hover:bg-black/30 transition-colors col-span-2">
+                <input type="checkbox" [(ngModel)]="crudForm.import" class="w-5 h-5 rounded border-white/30 bg-white/10 text-blue-500 focus:ring-blue-500/50" />
+                <span class="text-white">Importar</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!crudForm.name.trim()"
+          (btnClick)="saveCrud()"
+        >
+          Salvar Entidade
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
+
+<!-- MOSCOW ITEM MODAL -->
+<ion-modal [isOpen]="showMoscowModal" (didDismiss)="showMoscowModal = false">
+  <ng-template>
+    <div class="min-h-full bg-slate-900 flex flex-col">
+      <!-- Header -->
+      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+        <button
+          (click)="showMoscowModal = false"
+          class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
+        >
+          Cancelar
+        </button>
+        <h1 class="text-lg font-bold text-white text-center">Adicionar Item</h1>
+        <div class="w-8"></div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+        <!-- Form Card -->
+        <div class="p-6 rounded-3xl glass-morphism space-y-6">
+          <!-- Category Badge -->
+          <div>
+            <ion-badge [color]="getMoscowCategoryColor(moscowForm.category)">
+              {{ getMoscowCategoryLabel(moscowForm.category) }}
+            </ion-badge>
+          </div>
+
+          <!-- Requisito -->
+          <app-form-field
+            label="Requisito"
+            [required]="true"
+            [(ngModel)]="moscowForm.text"
+            placeholder="Descreva o requisito..."
+          ></app-form-field>
+        </div>
+
+        <!-- Save button -->
+        <app-btn-primary
+          [disabled]="!moscowForm.text.trim()"
+          (btnClick)="saveMoscow()"
+        >
+          Adicionar
+        </app-btn-primary>
+      </main>
+    </div>
+  </ng-template>
+</ion-modal>
