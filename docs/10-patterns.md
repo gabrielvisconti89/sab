@@ -298,6 +298,51 @@ Componentes customizados Angular (`<app-form-field>`, etc.) DEVEM ter `:host { d
 
 ---
 
+### Espacamento de Modais com Formulario
+
+**Data:** 2026-01-17
+**Problema:** Nas modais com formulario, o botao de acao estava colado no card do formulario (gap de 24px via space-y-6) enquanto havia mais espaco sobrando embaixo (padding de 32px via pb-8). O espacamento visual estava desbalanceado.
+**Solucao:** Inverter/equilibrar o espacamento aumentando o gap entre card e botao e reduzindo o padding inferior.
+
+**Arquivos envolvidos:**
+- `app/src/app/pages/project/tabs/ux-research/ux-research.page.html`
+- `app/src/app/pages/project/tabs/glossary/glossary.page.html`
+- `app/src/app/pages/project/tabs/requirements/requirements.page.html`
+- `app/src/app/pages/project/tabs/integrations/integrations.page.html`
+- `app/src/app/pages/project/tabs/data-architecture/data-architecture.page.html`
+- `app/src/app/components/export-modal/export-modal.component.html`
+- `app/src/app/pages/project/project.page.html`
+
+**Estrutura Padrao:**
+
+#### Container de Conteudo da Modal
+```html
+<main class="flex-1 px-4 pt-6 pb-6 space-y-8 overflow-y-auto no-scrollbar">
+  <!-- Form Card -->
+  <div class="p-6 rounded-3xl glass-morphism space-y-6">
+    <!-- campos aqui -->
+  </div>
+
+  <!-- Botao de acao -->
+  <app-btn-primary [disabled]="!isValid" (btnClick)="save()">
+    Salvar
+  </app-btn-primary>
+</main>
+```
+
+**Especificacoes:**
+| Propriedade | Valor Anterior | Valor Novo | Funcao |
+|-------------|----------------|------------|--------|
+| `space-y-*` | `space-y-6` (24px) | `space-y-8` (32px) | Gap entre card e botao |
+| `pb-*` | `pb-8` (32px) | `pb-6` (24px) | Padding inferior |
+
+**Resultado visual:**
+- Botao com mais "respiro" em relacao ao formulario acima (32px)
+- Espaco inferior equilibrado (24px)
+- Visual mais harmonioso e menos "apertado"
+
+---
+
 ## Template de Registro
 
 ```markdown
