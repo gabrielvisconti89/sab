@@ -13,21 +13,21 @@
     *ngIf="!isLoading && tables.length === 0"
     class="flex flex-col items-center justify-center h-full px-8 text-center"
   >
-    <div class="glass-card w-full max-w-sm">
-      <ion-icon
-        name="server-outline"
-        class="text-8xl text-white/30 mb-4"
-      ></ion-icon>
-      <h2 class="text-xl font-semibold text-white mb-2">
-        Nenhuma tabela ainda
-      </h2>
-      <p class="text-white/60 mb-6">
-        Comece criando sua primeira tabela de banco de dados.
+    <ion-icon name="server-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+    <p class="text-white/50">Nenhuma tabela cadastrada</p>
+
+    <!-- Card Informativo -->
+    <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+      <h4 class="text-base font-medium text-white/80 mb-2">O que são Tabelas de Dados?</h4>
+      <p class="text-sm text-white/50 mb-3">
+        Estrutura do banco de dados que armazena informações do sistema.
       </p>
-      <ion-button (click)="openCreateTable()" expand="block">
-        <ion-icon slot="start" name="add-outline"></ion-icon>
-        Criar Tabela
-      </ion-button>
+      <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+      <ul class="text-sm text-white/50 space-y-1 ml-3">
+        <li>• Modelagem clara</li>
+        <li>• Integridade de dados</li>
+        <li>• Base para migrations</li>
+      </ul>
     </div>
   </div>
 

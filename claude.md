@@ -92,6 +92,23 @@ Atualizar checklist apos cada implementacao e mostrar ao usuario.
 
 Utilizar componentes nativos do Ionic, ajustando para responsividade e boas praticas de UX.
 
+### Empty State Pattern - Obrigatorio
+
+**REGRA IMPERATIVA:** Toda tela com lista ou conteudo vazio DEVE seguir o padrao de Empty State documentado em `/docs/10-patterns.md`.
+
+**Elementos obrigatorios:**
+1. **Icone** - `text-6xl text-white/30 mb-4`
+2. **Mensagem** - `text-white/50` com texto "Nenhum(a) [item] cadastrado(a)"
+3. **Card Educativo** - Card com titulo, descricao e 3 vantagens
+
+**Ao criar nova tela:**
+- Implementar empty state seguindo o padrao antes de popular com dados
+- Consultar `/docs/10-patterns.md` para estrutura HTML exata
+
+**Ao modificar tela existente:**
+- Verificar se empty state segue o padrao
+- Adaptar se necessario antes de outras alteracoes
+
 ### Diretriz de Estilizacao - Tailwind CSS Obrigatorio
 
 Toda estilizacao deve usar Tailwind CSS. CSS customizado so quando nao existir classe Tailwind - consultar MCP antes e documentar excecao.

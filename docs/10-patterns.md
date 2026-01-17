@@ -240,6 +240,64 @@ Componentes customizados Angular (`<app-form-field>`, etc.) DEVEM ter `:host { d
 
 ---
 
+### Empty State Pattern
+
+**Data:** 2026-01-17
+**Problema:** Inconsistencia visual nos estados vazios das telas. Algumas telas tinham apenas icone e texto, outras tinham CTA mas sem contexto educativo.
+**Solucao:** Padronizar todos os empty states com 3 elementos obrigatorios: icone, mensagem e card educativo.
+
+**Arquivos envolvidos:**
+- `app/src/app/pages/project/tabs/ux-research/ux-research.page.html` (modelo de referencia - Persona)
+- Todas as paginas com listas ou conteudo vazio
+
+**Estrutura Padrao:**
+
+#### Container do Empty State
+```html
+<div *ngIf="items.length === 0" class="text-center py-12">
+  <!-- 1. Icone -->
+  <ion-icon name="[icon]-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+
+  <!-- 2. Mensagem -->
+  <p class="text-white/50">Nenhum(a) [item] cadastrado(a)</p>
+
+  <!-- 3. Card Educativo -->
+  <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+    <h4 class="text-base font-medium text-white/80 mb-2">O que é [conceito]?</h4>
+    <p class="text-sm text-white/50 mb-3">
+      [Descricao breve do conceito em 1-2 linhas]
+    </p>
+    <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+    <ul class="text-sm text-white/50 space-y-1 ml-3">
+      <li>• [Vantagem 1]</li>
+      <li>• [Vantagem 2]</li>
+      <li>• [Vantagem 3]</li>
+    </ul>
+  </div>
+</div>
+```
+
+**Especificacoes:**
+| Elemento | Classe Tailwind | Descricao |
+|----------|-----------------|-----------|
+| Container | `text-center py-12` | Centraliza e adiciona espacamento vertical |
+| Icone | `text-6xl text-white/30 mb-4` | Grande, opacidade baixa, margem inferior |
+| Mensagem | `text-white/50` | Texto discreto |
+| Card | `mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left` | Card discreto centralizado |
+| Titulo Card | `text-base font-medium text-white/80 mb-2` | Titulo visivel |
+| Descricao Card | `text-sm text-white/50 mb-3` | Texto pequeno e discreto |
+| Label Vantagens | `text-sm text-white/60 font-medium mb-1` | Destaque sutil |
+| Lista Vantagens | `text-sm text-white/50 space-y-1 ml-3` | Lista com espacamento |
+
+**Elementos Obrigatorios:**
+1. **Icone** - Representativo do tipo de item vazio
+2. **Mensagem** - "Nenhum(a) [item] cadastrado(a)" ou similar
+3. **Card Educativo** - Explica o conceito e lista 3 vantagens
+
+**Nota:** Nunca usar CTA/botao dentro do empty state. O botao de adicionar deve estar no header da secao ou como FAB.
+
+---
+
 ## Template de Registro
 
 ```markdown

@@ -60,7 +60,21 @@
   <!-- Empty State -->
   <div *ngIf="filteredTerms.length === 0" class="text-center py-12">
     <ion-icon name="book-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
-    <p class="text-white/50">Nenhum termo encontrado</p>
+    <p class="text-white/50">Nenhum termo cadastrado</p>
+
+    <!-- Card Informativo -->
+    <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+      <h4 class="text-base font-medium text-white/80 mb-2">O que é o Glossário?</h4>
+      <p class="text-sm text-white/50 mb-3">
+        Dicionário de termos técnicos e de negócio do projeto.
+      </p>
+      <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+      <ul class="text-sm text-white/50 space-y-1 ml-3">
+        <li>• Padronizar linguagem</li>
+        <li>• Facilitar onboarding</li>
+        <li>• Evitar ambiguidades</li>
+      </ul>
+    </div>
   </div>
 </div>
 

@@ -67,8 +67,24 @@
         </ion-button>
       </div>
     </div>
-    <p *ngIf="(currentEnv.envVariables | keyvalue).length === 0" class="text-sm text-white/40 text-center py-4">
-      Nenhuma variável configurada
-    </p>
+    <!-- Empty State -->
+    <div *ngIf="(currentEnv.envVariables | keyvalue).length === 0" class="text-center py-8">
+      <ion-icon name="key-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhuma variável configurada</p>
+
+      <!-- Card Informativo -->
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que são Variáveis de Ambiente?</h4>
+        <p class="text-sm text-white/50 mb-3">
+          Configurações que mudam entre ambientes (dev, staging, prod).
+        </p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Separar config de código</li>
+          <li>• Facilitar deploy</li>
+          <li>• Aumentar segurança</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>

@@ -187,7 +187,21 @@
     <!-- Empty State -->
     <div *ngIf="journeySteps.length === 0" class="text-center py-12">
       <ion-icon name="map-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
-      <p class="text-white/50">Nenhuma etapa da jornada</p>
+      <p class="text-white/50">Nenhuma etapa da jornada cadastrada</p>
+
+      <!-- Card Informativo -->
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que é a Jornada do Usuário?</h4>
+        <p class="text-sm text-white/50 mb-3">
+          Mapeamento das etapas que o usuário percorre ao usar seu produto.
+        </p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Identificar pontos de fricção</li>
+          <li>• Otimizar experiência</li>
+          <li>• Alinhar equipe</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -243,6 +257,20 @@
     <div *ngIf="screens.length === 0" class="text-center py-12">
       <ion-icon name="phone-portrait-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
       <p class="text-white/50">Nenhuma tela cadastrada</p>
+
+      <!-- Card Informativo -->
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que são Telas?</h4>
+        <p class="text-sm text-white/50 mb-3">
+          Representação visual das interfaces do seu aplicativo.
+        </p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Documentar fluxo visual</li>
+          <li>• Facilitar handoff</li>
+          <li>• Manter consistência</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -287,6 +315,20 @@
     <div *ngIf="criticalActions.length === 0" class="text-center py-12">
       <ion-icon name="flash-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
       <p class="text-white/50">Nenhuma ação crítica cadastrada</p>
+
+      <!-- Card Informativo -->
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que são Ações Críticas?</h4>
+        <p class="text-sm text-white/50 mb-3">
+          Operações essenciais que o usuário precisa realizar com sucesso.
+        </p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Priorizar testes</li>
+          <li>• Focar em conversão</li>
+          <li>• Reduzir erros</li>
+        </ul>
+      </div>
     </div>
   </div>
 
