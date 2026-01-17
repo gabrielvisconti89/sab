@@ -145,6 +145,9 @@ Consultar documentacao oficial via MCP a cada planejamento ou implementacao.
 ## Comandos de Desenvolvimento
 
 ### Frontend (Ionic)
+
+**Antes de iniciar `ionic serve`:** Sempre verificar se o servidor ja esta rodando em `localhost:8100` (pode estar em outro terminal). Usar `curl -s http://localhost:8100 | head -5` para verificar.
+
 ```bash
 cd app
 npm install
