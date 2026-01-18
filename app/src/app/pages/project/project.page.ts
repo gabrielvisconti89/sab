@@ -6,6 +6,7 @@ import { Project, Table, DatabaseType } from '../../models';
 import { ProjectService } from '../../shared/services/project.service';
 import { TableService } from '../../shared/services/table.service';
 import { ToastService } from '../../shared/services/toast.service';
+import { takeUntil, Subject } from 'rxjs';
 
 interface Tab {
   id: string;
@@ -28,6 +29,7 @@ export class ProjectPage implements OnInit, OnDestroy, AfterViewInit {
   projectId: number = 0;
   activeTab = 'ux-research';
   private routerSubscription?: Subscription;
+  private destroy$ = new Subject<void>();
 
   // Export modal
   showExportModal = false;
@@ -82,6 +84,15 @@ export class ProjectPage implements OnInit, OnDestroy, AfterViewInit {
     this.routerSubscription = this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => this.syncActiveTabFromUrl());
+
+    // Subscribe to project updates to refresh progress
+    this.projectService.projectUpdated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((updatedProjectId) => {
+        if (updatedProjectId === this.projectId) {
+          this.loadProject();
+        }
+      });
   }
 
   ngAfterViewInit() {
@@ -91,6 +102,8 @@ export class ProjectPage implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.routerSubscription?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private syncActiveTabFromUrl() {

@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, forwardRef, inject } from '@angular/core';
 import { StorageService } from './storage.service';
+import { ProjectService } from './project.service';
 import { STORAGE_KEYS } from '../../constants/storage-keys';
 import { Table, Column } from '../../models';
 
@@ -7,7 +8,8 @@ import { Table, Column } from '../../models';
   providedIn: 'root'
 })
 export class TableService {
-  constructor(private storageService: StorageService) {}
+  private storageService = inject(StorageService);
+  private projectService = inject(forwardRef(() => ProjectService));
 
   // === Table CRUD ===
 
@@ -38,6 +40,9 @@ export class TableService {
 
     tables.push(table);
     await this.storageService.set(STORAGE_KEYS.tables(projectId), tables);
+
+    // Recalcular progresso após criar tabela
+    await this.projectService.recalculateProgress(projectId);
 
     return table;
   }
@@ -72,6 +77,10 @@ export class TableService {
     filtered.forEach((t, i) => t.orderIndex = i);
 
     await this.storageService.set(STORAGE_KEYS.tables(projectId), filtered);
+
+    // Recalcular progresso após deletar tabela
+    await this.projectService.recalculateProgress(projectId);
+
     return true;
   }
 
