@@ -140,7 +140,7 @@ export class ExportModalComponent implements OnInit {
         this.exportProgress = 70;
         const claudeMd = this.documentationGenerator.generateClaudeMd(this.project, this.tables);
         this.generatedFiles.push({
-          name: 'claude.md',
+          name: 'CLAUDE.md',
           content: claudeMd,
           type: 'md',
         });
@@ -341,7 +341,10 @@ export class ExportModalComponent implements OnInit {
 
   get canExport(): boolean {
     const hasOutput = this.options.sql || this.options.migrations || this.options.claudeMd || this.options.readme;
-    return this.tables.length > 0 && hasOutput;
+    // SQL e Migrations precisam de tabelas, mas documentação pode ser gerada sem
+    const needsTables = this.options.sql || this.options.migrations;
+    const hasDocsOnly = (this.options.claudeMd || this.options.readme) && !needsTables;
+    return hasOutput && (this.tables.length > 0 || hasDocsOnly);
   }
 
   get hasValidationErrors(): boolean {

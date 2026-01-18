@@ -29,7 +29,7 @@ export class DocumentationGeneratorService {
     content += this.generateUxSection(project);
     content += this.generateRequirementsSection(project);
     content += this.generateDataArchitectureSection(project, tables);
-    content += this.generateStackSection(project);
+    content += this.generateStackSection(project, tables);
     content += this.generateIntegrationsSection(project);
     content += this.generateEnvironmentsSection(project);
     content += this.generateGlossarySection(project);
@@ -353,7 +353,7 @@ export class DocumentationGeneratorService {
     return content;
   }
 
-  private generateStackSection(project: Project): string {
+  private generateStackSection(project: Project, tables: Table[]): string {
     let content = '';
 
     // Frontend Stack
@@ -390,32 +390,164 @@ export class DocumentationGeneratorService {
     // Backend Stack
     if (project.backendStackData) {
       const be = project.backendStackData;
+
+      // Skip if no framework selected (frontend-only project)
+      if (be.framework === 'none') {
+        return content;
+      }
+
       content += `## Stack Backend\n\n`;
 
-      if (be.php) content += `- **PHP:** ${be.php.version}\n`;
-      if (be.laravel) {
-        content += `- **Laravel:** ${be.laravel.version}`;
-        if (be.laravel.starterKit) content += ` (${be.laravel.starterKit})`;
-        content += `\n`;
-        if (be.laravel.apiAuth) content += `- **API Auth:** ${be.laravel.apiAuth}\n`;
+      if (be.framework === 'laravel' && be.laravel) {
+        content += this.generateLaravelStack(be, tables);
+      } else if (be.framework === 'nodejs' && be.nodejs) {
+        content += this.generateNodejsStack(be, tables);
       }
-      if (be.database) {
-        content += `- **Database Driver:** ${be.database.driver}\n`;
-        if (be.database.redis) content += `- **Redis:** Habilitado\n`;
-      }
-
-      if (be.packages && be.packages.length > 0) {
-        content += `\n**Pacotes principais:**\n`;
-        be.packages
-          .filter((p) => p.enabled)
-          .forEach((pkg) => {
-            content += `- ${pkg.name}${pkg.version ? ` @${pkg.version}` : ''}\n`;
-          });
-      }
-      content += `\n`;
     }
 
     return content;
+  }
+
+  private generateLaravelStack(be: any, tables: Table[]): string {
+    let content = '';
+    const laravel = be.laravel;
+
+    content += `- **Framework:** Laravel ${laravel.version}\n`;
+    content += `- **PHP:** 8.3+ (inferido)\n`;
+
+    if (laravel.apiAuth && laravel.apiAuth !== 'Nenhuma') {
+      content += `- **Autenticação API:** ${laravel.apiAuth}\n`;
+    }
+
+    if (be.database) {
+      content += `- **Banco de Dados:** ${be.database.driver}\n`;
+    }
+
+    // Infer packages based on project needs
+    const inferredPackages = this.inferLaravelPackages(laravel, tables);
+    if (inferredPackages.length > 0) {
+      content += `\n**Pacotes recomendados (inferidos automaticamente):**\n`;
+      inferredPackages.forEach((pkg) => {
+        content += `- ${pkg.name} - ${pkg.reason}\n`;
+      });
+    }
+
+    content += `\n`;
+    return content;
+  }
+
+  private generateNodejsStack(be: any, tables: Table[]): string {
+    let content = '';
+    const nodejs = be.nodejs;
+
+    content += `- **Runtime:** Node.js 20+\n`;
+    content += `- **Framework:** ${nodejs.framework}\n`;
+
+    if (nodejs.auth && nodejs.auth !== 'Nenhuma') {
+      content += `- **Autenticação:** ${nodejs.auth}\n`;
+    }
+
+    if (be.database) {
+      content += `- **Banco de Dados:** ${be.database.driver}\n`;
+    }
+
+    // Infer packages based on project needs
+    const inferredPackages = this.inferNodejsPackages(nodejs, tables);
+    if (inferredPackages.length > 0) {
+      content += `\n**Pacotes recomendados (inferidos automaticamente):**\n`;
+      inferredPackages.forEach((pkg) => {
+        content += `- ${pkg.name} - ${pkg.reason}\n`;
+      });
+    }
+
+    content += `\n`;
+    return content;
+  }
+
+  private inferLaravelPackages(laravel: any, tables: Table[]): { name: string; reason: string }[] {
+    const packages: { name: string; reason: string }[] = [];
+
+    // Authentication packages
+    if (laravel.apiAuth === 'Sanctum') {
+      packages.push({ name: 'laravel/sanctum', reason: 'Autenticação API via tokens' });
+    } else if (laravel.apiAuth === 'Passport') {
+      packages.push({ name: 'laravel/passport', reason: 'OAuth2 completo' });
+    }
+
+    // Check for soft deletes in tables
+    const hasSoftDeletes = tables.some((t) => t.hasSoftDelete);
+    if (hasSoftDeletes) {
+      packages.push({ name: 'Trait SoftDeletes', reason: 'Tabelas com soft delete detectadas' });
+    }
+
+    // Check for relationships
+    const hasRelationships = tables.some((t) =>
+      t.columns?.some((c) => c.isForeignKey)
+    );
+    if (hasRelationships) {
+      packages.push({ name: 'Eloquent Relationships', reason: 'Relacionamentos entre tabelas detectados' });
+    }
+
+    // Check for file/image columns
+    const hasFileColumns = tables.some((t) =>
+      t.columns?.some((c) =>
+        c.name?.toLowerCase().includes('image') ||
+        c.name?.toLowerCase().includes('photo') ||
+        c.name?.toLowerCase().includes('file') ||
+        c.name?.toLowerCase().includes('avatar')
+      )
+    );
+    if (hasFileColumns) {
+      packages.push({ name: 'spatie/laravel-media-library ou Storage', reason: 'Colunas de arquivo/imagem detectadas' });
+    }
+
+    // Development tools
+    packages.push({ name: 'laravel/pint', reason: 'Code style' });
+    packages.push({ name: 'pestphp/pest ou phpunit', reason: 'Testes' });
+
+    return packages;
+  }
+
+  private inferNodejsPackages(nodejs: any, tables: Table[]): { name: string; reason: string }[] {
+    const packages: { name: string; reason: string }[] = [];
+    const isNestJS = nodejs.framework === 'NestJS';
+
+    // Authentication packages
+    if (nodejs.auth === 'JWT') {
+      if (isNestJS) {
+        packages.push({ name: '@nestjs/jwt, @nestjs/passport', reason: 'Autenticação JWT' });
+      } else {
+        packages.push({ name: 'jsonwebtoken, express-jwt', reason: 'Autenticação JWT' });
+      }
+    } else if (nodejs.auth === 'Session') {
+      if (isNestJS) {
+        packages.push({ name: 'express-session, @nestjs/passport', reason: 'Autenticação por sessão' });
+      } else {
+        packages.push({ name: 'express-session, passport', reason: 'Autenticação por sessão' });
+      }
+    }
+
+    // ORM based on tables
+    if (tables.length > 0) {
+      if (isNestJS) {
+        packages.push({ name: '@nestjs/typeorm ou prisma', reason: 'ORM para banco de dados' });
+      } else {
+        packages.push({ name: 'prisma ou sequelize', reason: 'ORM para banco de dados' });
+      }
+    }
+
+    // Validation
+    if (isNestJS) {
+      packages.push({ name: 'class-validator, class-transformer', reason: 'Validação de dados' });
+    } else {
+      packages.push({ name: 'joi ou zod', reason: 'Validação de dados' });
+    }
+
+    // Common utilities
+    packages.push({ name: 'dotenv', reason: 'Variáveis de ambiente' });
+    packages.push({ name: 'cors', reason: 'Cross-Origin Resource Sharing' });
+
+    return packages;
   }
 
   private generateIntegrationsSection(project: Project): string {

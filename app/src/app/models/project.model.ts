@@ -254,12 +254,23 @@ export interface FrontendStackData {
   buildConfig: Record<string, boolean>;
 }
 
+export type BackendFrameworkType = 'none' | 'laravel' | 'nodejs';
+
+export interface LaravelConfig {
+  version: string;      // '11.x' | '12.x'
+  apiAuth: string;      // 'Sanctum' | 'Passport' | 'Nenhuma'
+}
+
+export interface NodejsConfig {
+  framework: string;    // 'Express' | 'NestJS'
+  auth: string;         // 'JWT' | 'Session' | 'Nenhuma'
+}
+
 export interface BackendStackData {
-  php: { version: string; extensions: string[] };
-  laravel: { version: string; starterKit: string; apiAuth: string };
-  packages: Dependency[];
-  database: { driver: string; redis: boolean };
-  services: Record<string, string>;
+  framework: BackendFrameworkType;
+  laravel?: LaravelConfig;
+  nodejs?: NodejsConfig;
+  database?: { driver: string };
 }
 
 export interface Dependency {

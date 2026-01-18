@@ -47,6 +47,16 @@
     <div *ngIf="externalApis.length === 0" class="text-center py-12">
       <ion-icon name="cloud-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
       <p class="text-white/50">Nenhuma API configurada</p>
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que são APIs Externas?</h4>
+        <p class="text-sm text-white/50 mb-3">Integrações com serviços externos que seu sistema consome ou fornece dados.</p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Documentação clara das dependências</li>
+          <li>• Facilita manutenção e troubleshooting</li>
+          <li>• Visibilidade das integrações do sistema</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -76,7 +86,17 @@
     </div>
     <div *ngIf="webhooksReceived.length === 0" class="text-center py-12">
       <ion-icon name="arrow-down-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
-      <p class="text-white/50">Nenhum webhook recebido</p>
+      <p class="text-white/50">Nenhum webhook recebido configurado</p>
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que são Webhooks Recebidos?</h4>
+        <p class="text-sm text-white/50 mb-3">Endpoints que recebem notificações de eventos de sistemas externos.</p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Reações em tempo real a eventos externos</li>
+          <li>• Integração assíncrona eficiente</li>
+          <li>• Documentação dos pontos de entrada</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -106,7 +126,17 @@
     </div>
     <div *ngIf="webhooksSent.length === 0" class="text-center py-12">
       <ion-icon name="arrow-up-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
-      <p class="text-white/50">Nenhum webhook enviado</p>
+      <p class="text-white/50">Nenhum webhook enviado configurado</p>
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que são Webhooks Enviados?</h4>
+        <p class="text-sm text-white/50 mb-3">Notificações automáticas que seu sistema envia para serviços externos.</p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Comunicação assíncrona com parceiros</li>
+          <li>• Automação de processos</li>
+          <li>• Rastreamento de notificações enviadas</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>

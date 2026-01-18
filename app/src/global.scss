@@ -250,9 +250,9 @@ ion-modal {
   // Mobile/Tablet: modal ocupa 100% da tela
   --height: 100%;
 
-  // Desktop: modal com altura automática e max-height
+  // Desktop: modal com altura fixa para permitir scroll interno
   @media (min-width: 1024px) {
-    --height: auto;
+    --height: 80vh;
     --max-height: 80vh;
     --border-radius: 8px;
   }
@@ -265,7 +265,7 @@ ion-modal {
       var(--gradient-mid) 0%,
       var(--gradient-start) 100%
     );
-    overflow: hidden;
+    overflow: auto;
   }
 
   ion-header ion-toolbar {

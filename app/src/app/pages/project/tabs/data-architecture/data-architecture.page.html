@@ -11,7 +11,7 @@
   <!-- Empty State -->
   <div
     *ngIf="!isLoading && tables.length === 0"
-    class="flex flex-col items-center justify-center h-full px-8 text-center"
+    class="text-center py-12"
   >
     <ion-icon name="server-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
     <p class="text-white/50">Nenhuma tabela cadastrada</p>
@@ -107,8 +107,19 @@
 
   <!-- Columns List -->
   <div class="flex-1 overflow-auto p-4 space-y-2 pb-24">
-    <div *ngIf="selectedTable.columns?.length === 0" class="text-center py-8">
-      <p class="text-white/60">Nenhuma coluna ainda.</p>
+    <div *ngIf="selectedTable.columns?.length === 0" class="text-center py-12">
+      <ion-icon name="layers-outline" class="text-6xl text-white/30 mb-4"></ion-icon>
+      <p class="text-white/50">Nenhuma coluna cadastrada</p>
+      <div class="mt-6 mx-auto max-w-sm p-5 border border-white/10 rounded-xl text-left">
+        <h4 class="text-base font-medium text-white/80 mb-2">O que são Colunas?</h4>
+        <p class="text-sm text-white/50 mb-3">Campos que definem a estrutura e tipos de dados de uma tabela.</p>
+        <p class="text-sm text-white/60 font-medium mb-1">Vantagens:</p>
+        <ul class="text-sm text-white/50 space-y-1 ml-3">
+          <li>• Tipagem forte dos dados</li>
+          <li>• Validação automática</li>
+          <li>• Geração de migrations</li>
+        </ul>
+      </div>
     </div>
 
     <div

@@ -1,8 +1,8 @@
 <ion-modal [isOpen]="isOpen" (didDismiss)="onClose()">
   <ng-template>
-    <div class="min-h-full bg-slate-900 flex flex-col">
+    <div class="h-full bg-slate-900 flex flex-col">
       <!-- Header -->
-      <header class="glass-header sticky top-0 z-10 px-4 py-4 grid grid-cols-3 items-center">
+      <header class="glass-header shrink-0 px-4 py-4 grid grid-cols-3 items-center">
         <button
           (click)="onClose()"
           class="justify-self-start text-sm font-medium text-white/70 hover:text-white transition-colors"
@@ -14,9 +14,9 @@
       </header>
 
       <!-- Content -->
-      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto no-scrollbar">
+      <main class="flex-1 px-4 pt-6 pb-8 space-y-6 overflow-y-auto">
         <!-- Export Options -->
-        <div *ngIf="!exportComplete">
+        <div *ngIf="!exportComplete" class="space-y-6">
           <!-- Database Target Card -->
           <div class="p-6 rounded-3xl glass-morphism space-y-6 mb-6">
             <div>
@@ -90,7 +90,7 @@
               <div class="flex-1">
                 <div class="flex items-center gap-2">
                   <ion-icon name="document-text-outline" class="text-green-400 text-xl"></ion-icon>
-                  <span class="font-medium text-white">claude.md</span>
+                  <span class="font-medium text-white">CLAUDE.md</span>
                 </div>
                 <p class="text-sm text-white/50 mt-1">Documentação completa para uso com IA</p>
               </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendStackData, Dependency, Project } from '../../../../models';
+import { BackendStackData, BackendFrameworkType, LaravelConfig, NodejsConfig, Project } from '../../../../models';
 import { ProjectService } from '../../../../shared/services/project.service';
 
 @Component({
@@ -14,16 +14,22 @@ export class BackendStackPage implements OnInit {
   project: Project | null = null;
   isLoading = true;
 
-  php = { version: '8.3', extensions: ['mbstring', 'openssl', 'pdo', 'tokenizer', 'xml', 'ctype', 'json'] };
-  laravel = { version: '12.x', starterKit: 'None', apiAuth: 'Sanctum' };
-  packages: Dependency[] = [];
-  database = { driver: 'mysql', redis: true };
-  services: Record<string, string> = {};
+  selectedFramework: BackendFrameworkType = 'laravel';
+  laravelConfig: LaravelConfig = { version: '12.x', apiAuth: 'Sanctum' };
+  nodejsConfig: NodejsConfig = { framework: 'Express', auth: 'JWT' };
+  database = { driver: 'mysql' };
 
-  starterKitOptions = ['None', 'Breeze', 'Jetstream', 'Fortify'];
-  apiAuthOptions = ['Sanctum', 'Passport', 'JWT', 'None'];
-  databaseDrivers = ['mysql', 'postgresql', 'sqlite', 'sqlserver'];
-  extensionOptions = ['mbstring', 'openssl', 'pdo', 'tokenizer', 'xml', 'ctype', 'json', 'fileinfo', 'gd', 'imagick', 'redis', 'zip'];
+  frameworkOptions = [
+    { value: 'none' as BackendFrameworkType, label: 'Nenhum', icon: 'close-circle-outline' },
+    { value: 'laravel' as BackendFrameworkType, label: 'Laravel', icon: 'logo-laravel' },
+    { value: 'nodejs' as BackendFrameworkType, label: 'NodeJS', icon: 'logo-nodejs' },
+  ];
+
+  laravelVersions = ['11.x', '12.x'];
+  laravelAuthOptions = ['Sanctum', 'Passport', 'Nenhuma'];
+  nodejsFrameworks = ['Express', 'NestJS'];
+  nodejsAuthOptions = ['JWT', 'Session', 'Nenhuma'];
+  databaseDrivers = ['mysql', 'postgresql', 'sqlite'];
 
   constructor(
     private route: ActivatedRoute,
@@ -65,12 +71,7 @@ export class BackendStackPage implements OnInit {
     try {
       this.project = await this.projectService.getProject(this.projectId);
       if (this.project?.backendStackData) {
-        const data = this.project.backendStackData;
-        this.php = data.php ?? this.php;
-        this.laravel = data.laravel ?? this.laravel;
-        this.packages = data.packages ?? [];
-        this.database = data.database ?? this.database;
-        this.services = data.services ?? {};
+        this.loadFromProject(this.project.backendStackData);
       } else {
         this.loadDefaultData();
       }
@@ -82,49 +83,44 @@ export class BackendStackPage implements OnInit {
     }
   }
 
-  private async saveData() {
-    const backendStack: BackendStackData = {
-      php: this.php,
-      laravel: this.laravel,
-      packages: this.packages,
-      database: this.database,
-      services: this.services,
-    };
-
-    try {
-      await this.projectService.updateBackendStackData(this.projectId, backendStack);
-    } catch (error) {
-      console.error('Failed to save backend stack data:', error);
+  private loadFromProject(data: BackendStackData) {
+    // Handle new format
+    if (data.framework) {
+      this.selectedFramework = data.framework;
+      if (data.laravel) {
+        this.laravelConfig = { ...this.laravelConfig, ...data.laravel };
+      }
+      if (data.nodejs) {
+        this.nodejsConfig = { ...this.nodejsConfig, ...data.nodejs };
+      }
+      if (data.database) {
+        this.database = { ...this.database, ...data.database };
+      }
+    } else {
+      // Migrate from old format
+      const oldData = data as any;
+      if (oldData.laravel) {
+        this.selectedFramework = 'laravel';
+        this.laravelConfig = {
+          version: oldData.laravel.version || '12.x',
+          apiAuth: oldData.laravel.apiAuth || 'Sanctum',
+        };
+      }
+      if (oldData.database?.driver) {
+        this.database.driver = oldData.database.driver;
+      }
     }
   }
 
   loadDefaultData() {
-    this.packages = [
-      { name: 'laravel/sanctum', version: '^4.0', isDev: false, enabled: true },
-      { name: 'spatie/laravel-permission', version: '^6.0', isDev: false, enabled: true },
-      { name: 'spatie/laravel-query-builder', version: '^5.0', isDev: false, enabled: false },
-      { name: 'laravel/telescope', version: '^5.0', isDev: true, enabled: true },
-      { name: 'laravel/pint', version: '^1.0', isDev: true, enabled: true },
-      { name: 'pestphp/pest', version: '^2.0', isDev: true, enabled: true },
-      { name: 'barryvdh/laravel-ide-helper', version: '^3.0', isDev: true, enabled: true },
-    ];
-
-    this.services = {
-      mail: 'SMTP',
-      queue: 'Redis',
-      cache: 'Redis',
-      session: 'Database',
-      filesystem: 'S3',
-    };
+    this.selectedFramework = 'laravel';
+    this.laravelConfig = { version: '12.x', apiAuth: 'Sanctum' };
+    this.nodejsConfig = { framework: 'Express', auth: 'JWT' };
+    this.database = { driver: 'mysql' };
   }
 
-  async toggleExtension(ext: string) {
-    const index = this.php.extensions.indexOf(ext);
-    if (index === -1) {
-      this.php.extensions.push(ext);
-    } else {
-      this.php.extensions.splice(index, 1);
-    }
+  async selectFramework(framework: BackendFrameworkType) {
+    this.selectedFramework = framework;
     await this.saveData();
   }
 
@@ -132,8 +128,23 @@ export class BackendStackPage implements OnInit {
     await this.saveData();
   }
 
-  async togglePackage(pkg: Dependency) {
-    pkg.enabled = !pkg.enabled;
-    await this.saveData();
+  private async saveData() {
+    const backendStack: BackendStackData = {
+      framework: this.selectedFramework,
+    };
+
+    if (this.selectedFramework === 'laravel') {
+      backendStack.laravel = { ...this.laravelConfig };
+      backendStack.database = { ...this.database };
+    } else if (this.selectedFramework === 'nodejs') {
+      backendStack.nodejs = { ...this.nodejsConfig };
+      backendStack.database = { ...this.database };
+    }
+
+    try {
+      await this.projectService.updateBackendStackData(this.projectId, backendStack);
+    } catch (error) {
+      console.error('Failed to save backend stack data:', error);
+    }
   }
 }
